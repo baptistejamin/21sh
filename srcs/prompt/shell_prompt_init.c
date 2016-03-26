@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell.c                                            :+:      :+:    :+:   */
+/*   shell_prompt_init.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,43 +12,33 @@
 
 #include <shell.h>
 
-t_sh	*shell_recover(void)
-{
-	static t_sh	sh;
-	return (&sh);
-}
-
-static int		shell(t_sh *sh)
-{
-	shell_prompt_init(sh);
-	while (1)
-	{
-
-	}
-}
-
-int				main(int argc, char **argv, char **environ)
+int			tputs_putchar(int c)
 {
 	t_sh	*sh;
-	char	*nb;
 
 	sh = shell_recover();
-	UNUSED(argv);
-	if (argc > 1)
-	{
-		ft_putendl_fd("21sh cannot execute commands", 2);
+	write(sh->tty, &c, 1);
+	return (1);
+}
+
+int		shell_prompt_init(t_sh *sh)
+{ 
+	char	buff_env[4096];
+
+	if ((sh->term_name = getenv("TERM")) == NULL)
 		return (0);
-	}
-	shell_init_builtins(sh);
-	sh->env_list = NULL;
-	shell_env_to_list(&sh->env_list, environ);
-	if (shell_env_get(sh->env_list, "SHLVL"))
-		nb = ft_itoa(ft_atoi(shell_env_get(sh->env_list, "SHLVL")) + 1);
-	else
-		nb = ft_itoa(1);
-	shell_builtins_setenv_set(&sh->env_list, "SHLVL", nb);
-	if (nb)
-		free(nb);
-	shell_signals();
-	return (shell(sh));
+	if (tgetent(buff_env, sh->term_name) != 1)
+		return (0);
+	if (tcgetattr(0, &sh->term) == -1)
+		return (0);
+	sh->tty = 1;
+
+	sh->term.c_lflag &= ~(ICANON | ECHO);
+	sh->term.c_cc[VMIN] = 1;
+	sh->term.c_cc[VTIME] = 0;
+	if (tcsetattr(0, TCSADRAIN, &sh->term) == -1)
+		return (0);
+	tputs(tgetstr("te", NULL), 1, tputs_putchar);
+	tputs(tgetstr("ve", NULL), 1, tputs_putchar);
+	return (1);
 }
