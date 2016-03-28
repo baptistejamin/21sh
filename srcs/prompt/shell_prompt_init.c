@@ -17,8 +17,9 @@ void	shell_prompt_add_new(t_sh *sh)
 	t_prompt	prompt;
 
 	prompt.chars = NULL;
-	prompt.cursor_position = 0;
+	prompt.cursor_index = 0;
 	ft_lstadd(&sh->history, ft_lstnew(&prompt, sizeof(t_prompt)));
+	sh->current_prompt = sh->history->content;
 }
 
 int		shell_prompt_init(t_sh *sh)
@@ -31,6 +32,7 @@ int		shell_prompt_init(t_sh *sh)
 		return (0);
 	if (tcgetattr(0, &sh->term) == -1)
 		return (0);
+	sh->prompt_position = 0;
 	sh->tty = 1;
 	sh->term.c_lflag &= ~(ICANON | ECHO);
 	sh->term.c_cc[VMIN] = 1;

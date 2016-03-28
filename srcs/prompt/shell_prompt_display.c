@@ -24,18 +24,16 @@ int		tputs_putchar(int c)
 static void		shell_prompt_update_cursor(void)
 {
 	t_sh		*sh;
-	t_prompt	*prompt;
 	int			i;
 
 	sh = shell_recover();
 	i = 0;
-	prompt = sh->history->content;
 	tputs(tgetstr("cr", NULL), 0, tputs_putchar);
 
 	//Prompt len
 	tputs(tgetstr("nd", NULL), 0, tputs_putchar);
 	tputs(tgetstr("nd", NULL), 0, tputs_putchar);
-	while (i < prompt->cursor_position)
+	while (i < sh->current_prompt->cursor_index)
 	{
 		tputs(tgetstr("nd", NULL), 0, tputs_putchar);
 		i++;
@@ -46,14 +44,12 @@ static void		shell_prompt_update_cursor(void)
 int		shell_prompt_display(t_sh *sh)
 {
 	t_list		*char_list;
-	t_prompt	*prompt;
 	char		current_char;
 
 	tputs(tgetstr("cr", NULL), 0, tputs_putchar);
 	tputs(tgetstr("ce", NULL), 0, tputs_putchar);
 	ft_putstr_fd("$>", sh->tty);
-	prompt = sh->history->content;
-	char_list = prompt->chars;
+	char_list =  sh->current_prompt->chars;
 	while (char_list)
 	{
 		current_char = *(char *)char_list->content;

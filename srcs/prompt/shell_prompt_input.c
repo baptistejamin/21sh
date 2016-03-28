@@ -22,32 +22,29 @@ void	free_char(void *content, size_t size)
 enum e_prompt_status prompt_move_right(char *buf)
 {
 	t_sh		*sh;
-	t_prompt	*prompt;
 
 	sh = shell_recover();
-
 	if (!RIGHT)
 		return (TRYING);
-	prompt = sh->history->content;
-	prompt->cursor_position++;
-	tputs(tgetstr("nd", NULL), 0, tputs_putchar);
+	if (sh->current_prompt->cursor_index < ft_lstcount(sh->current_prompt->chars))
+	{
+		sh->current_prompt->cursor_index++;
+		shell_prompt_display(sh);
+	}
 	return (READING);
 }
 
 enum e_prompt_status prompt_move_left(char *buf)
 {
 	t_sh		*sh;
-	t_prompt	*prompt;
 
 	sh = shell_recover();
-
 	if (!LEFT)
 		return (TRYING);
-	prompt = sh->history->content;
-	if (ft_lstcount(prompt->chars) > 0)
+	if (ft_lstcount(sh->current_prompt->chars) > 0)
 	{
-		prompt->cursor_position--;
-		tputs(tgetstr("le", NULL), 0, tputs_putchar);
+		sh->current_prompt->cursor_index--;
+		shell_prompt_display(sh);
 	}
 	return (READING);
 }
@@ -55,18 +52,14 @@ enum e_prompt_status prompt_move_left(char *buf)
 enum e_prompt_status prompt_delete_char(char *buf)
 {
 	t_sh		*sh;
-	t_prompt	*prompt;
 
 	sh = shell_recover();
-
 	if (!BACK_SPACE)
 		return (TRYING);
-	prompt = sh->history->content;
-	if (prompt->cursor_position > 0)
+	if (sh->current_prompt->cursor_index > 0)
 	{
-		ft_lstdel_at(&prompt->chars, prompt->cursor_position - 1, &free_char);
-		prompt->cursor_position--;
-		tputs(tgetstr("le", NULL), 0, tputs_putchar);
+		ft_lstdel_at(&sh->current_prompt->chars, sh->current_prompt->cursor_index - 1, &free_char);
+		sh->current_prompt->cursor_index--;
 		shell_prompt_display(sh);
 	}
 	return (READING);
@@ -75,16 +68,13 @@ enum e_prompt_status prompt_delete_char(char *buf)
 enum e_prompt_status prompt_delete_next_char(char *buf)
 {
 	t_sh		*sh;
-	t_prompt	*prompt;
 
 	sh = shell_recover();
-
 	if (!DELETE)
 		return (TRYING);
-	prompt = sh->history->content;
-	if (prompt->cursor_position > 0)
+	if (sh->current_prompt->cursor_index > 0)
 	{
-		ft_lstdel_at(&prompt->chars, prompt->cursor_position, &free_char);
+		ft_lstdel_at(&sh->current_prompt->chars, sh->current_prompt->cursor_index, &free_char);
 		shell_prompt_display(sh);
 	}
 	return (READING);
@@ -92,15 +82,45 @@ enum e_prompt_status prompt_delete_next_char(char *buf)
 
 enum e_prompt_status prompt_insert_char(char *buf)
 {
-	t_prompt	*prompt;
 	t_sh		*sh;
 
 	sh = shell_recover();
-	prompt = sh->history->content;
 	if (buf[0] && !(buf[1]) && !(buf[2]))
 	{
-		ft_lstadd_at(&prompt->chars, ft_lstnew(&buf[0], sizeof(char)), prompt->cursor_position);
-		prompt->cursor_position++;
+		ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&buf[0], sizeof(char)), sh->current_prompt->cursor_index);
+		sh->current_prompt->cursor_index++;
+		shell_prompt_display(sh);
+	}
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_to_last_prompt(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!UP)
+		return (TRYING);
+	if (ft_lstget_at(sh->history, sh->prompt_position + 1))
+	{
+		sh->prompt_position++;
+		sh->current_prompt = ft_lstget_at(sh->history, sh->prompt_position)->content;
+		shell_prompt_display(sh);
+	}
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_to_next_prompt(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!DOWN)
+		return (TRYING);
+	if (ft_lstget_at(sh->history, sh->prompt_position - 1))
+	{
+		sh->prompt_position--;
+		sh->current_prompt = ft_lstget_at(sh->history, sh->prompt_position)->content;
 		shell_prompt_display(sh);
 	}
 	return (READING);
@@ -122,6 +142,8 @@ static void	*shell_prompt_get_functions(void)
 		prompt_delete_char,
 		prompt_delete_next_char,
 		prompt_fire_cmd,
+		prompt_move_to_last_prompt,
+		prompt_move_to_next_prompt,
 		prompt_insert_char,
 		NULL
 	};
@@ -171,10 +193,11 @@ char		*shell_prompt_input(t_sh *sh)
 	UNUSED(sh);
 	while (read(0, buf, 3))
 	{
+		//printf("\n%s %s %s", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]));
 		status = shell_prompt_boot_function(buf);
 		ft_bzero(buf, 3);
 		if (status == FIRE_CMD)
-			return (shell_prompt_get_command(sh->history->content));
+			return (shell_prompt_get_command(sh->current_prompt));
 	}
 	return ("");
 }

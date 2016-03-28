@@ -24,8 +24,8 @@
 
 # define UNUSED(x) (void)(x)
 # define PATH_MAX 4096
-# define TOP ((buf[0] == 27 && buf[1] == 91 && buf[2] == 65))
-# define BOTTOM ((buf[0] == 27 && buf[1] == 91 && buf[2] == 66))
+# define UP ((buf[0] == 27 && buf[1] == 91 && buf[2] == 65))
+# define DOWN ((buf[0] == 27 && buf[1] == 91 && buf[2] == 66))
 # define RIGHT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 67))
 # define LEFT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 68))
 # define BACK_SPACE ((buf[0] == 127 && buf[1] == 0 && buf[2] == 0))
@@ -47,7 +47,7 @@ typedef struct stat		t_stat;
 typedef struct		s_prompt
 {
 	t_list			*chars;
-	int				cursor_position;
+	int				cursor_index;
 }					t_prompt;
 
 typedef struct		s_builtin
@@ -79,6 +79,8 @@ typedef struct		s_sh
 	t_list			*env_list;
 	int				last_res;
 	t_list			*history;
+	int				prompt_position;
+	t_prompt		*current_prompt;
 }					t_sh;
 
 t_sh				*shell_recover(void);
