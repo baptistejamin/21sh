@@ -32,12 +32,18 @@ int		shell_prompt_init(t_sh *sh)
 		return (0);
 	if (tcgetattr(0, &sh->term) == -1)
 		return (0);
-	sh->prompt_position = 0;
 	sh->tty = 1;
 	sh->term.c_lflag &= ~(ICANON | ECHO);
 	sh->term.c_cc[VMIN] = 1;
 	sh->term.c_cc[VTIME] = 0;
+	sh->prompt_position = 0;
 	if (tcsetattr(0, TCSADRAIN, &sh->term) == -1)
 		return (0);
+	shell_prompt_update_window(sh);
 	return (1);
+}
+
+int		shell_prompt_update_window(t_sh *sh)
+{
+	return (ioctl(0, TIOCGWINSZ, &sh->win) != -1);
 }

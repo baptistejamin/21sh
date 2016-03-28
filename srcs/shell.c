@@ -26,7 +26,6 @@ static int		shell(t_sh *sh)
 	int	is_last_cmd_empty;
 
 	is_last_cmd_empty = 0;
-	shell_prompt_init(sh);
 	while (1)
 	{
 		if (!is_last_cmd_empty)
@@ -51,8 +50,9 @@ int				main(int argc, char **argv, char **environ)
 	t_sh	*sh;
 	char	*nb;
 
-	sh = shell_recover();
 	UNUSED(argv);
+	sh = shell_recover();
+	shell_prompt_init(sh);
 	if (argc > 1)
 	{
 		ft_putendl_fd("21sh cannot execute commands", 2);

@@ -42,6 +42,7 @@ enum			e_prompt_status
 typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
 
 typedef struct termios	t_termios;
+typedef struct winsize	t_winsize;
 typedef struct stat		t_stat;
 
 typedef struct		s_prompt
@@ -76,6 +77,7 @@ typedef struct		s_sh
 	char			*term_name;
 	int				tty;
 	t_termios		term;
+	t_winsize		win;
 	t_list			*env_list;
 	int				last_res;
 	t_list			*history;
@@ -91,6 +93,7 @@ t_sh				*shell_recover(void);
 int					tputs_putchar(int c);
 int					shell_prompt_display(t_sh *sh);
 int					shell_prompt_init(t_sh *sh);
+int					shell_prompt_update_window(t_sh *sh);
 void				shell_prompt_add_new(t_sh *sh);
 char				*shell_prompt_input(t_sh *sh);
 

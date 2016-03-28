@@ -41,7 +41,7 @@ enum e_prompt_status prompt_move_left(char *buf)
 	sh = shell_recover();
 	if (!LEFT)
 		return (TRYING);
-	if (ft_lstcount(sh->current_prompt->chars) > 0)
+	if (sh->current_prompt->cursor_index > 0)
 	{
 		sh->current_prompt->cursor_index--;
 		shell_prompt_display(sh);
