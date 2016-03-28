@@ -24,11 +24,31 @@
 
 # define UNUSED(x) (void)(x)
 # define PATH_MAX 4096
+# define TOP ((buf[0] == 27 && buf[1] == 91 && buf[2] == 65))
+# define BOTTOM ((buf[0] == 27 && buf[1] == 91 && buf[2] == 66))
+# define RIGHT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 67))
+# define LEFT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 68))
+# define BACK_SPACE ((buf[0] == 127 && buf[1] == 0 && buf[2] == 0))
+# define DELETE ((buf[0] == 27 && buf[1] == 91 && buf[2] == 51))
+# define ENTER ((buf[0] == 10 && buf[1] == 0 && buf[2] == 0))
+
+enum			e_prompt_status
+{
+	TRYING,
+	READING,
+	FIRE_CMD
+};
 
 typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
 
 typedef struct termios	t_termios;
 typedef struct stat		t_stat;
+
+typedef struct		s_prompt
+{
+	t_list			*chars;
+	int				cursor_position;
+}					t_prompt;
 
 typedef struct		s_builtin
 {
@@ -53,13 +73,12 @@ typedef struct		s_env
 
 typedef struct		s_sh
 {
-	char			**env;
 	char			*term_name;
 	int				tty;
 	t_termios		term;
 	t_list			*env_list;
 	int				last_res;
-	t_builtin		builtins[10];
+	t_list			*history;
 }					t_sh;
 
 t_sh				*shell_recover(void);
@@ -67,7 +86,11 @@ t_sh				*shell_recover(void);
 /*
 * Prompt
 */
+int					tputs_putchar(int c);
+int					shell_prompt_display(t_sh *sh);
 int					shell_prompt_init(t_sh *sh);
+void				shell_prompt_add_new(t_sh *sh);
+char				*shell_prompt_input(t_sh *sh);
 
 /*
 * Cmds
@@ -93,7 +116,6 @@ void				shell_signals(void);
 * Buitlins
 */
 int					shell_boot(t_sh *sh, t_list *environ, char **cmds);
-void				shell_init_builtins(t_sh *sh);
 int					shell_builtins_exit(void *sh_, t_list *environ,
 									char **cmds);
 int					shell_builtins_help(void *sh_, t_list *environ,

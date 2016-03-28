@@ -1,26 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_signals.c                                    :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/10 14:06:11 by bjamin            #+#    #+#             */
-/*   Updated: 2016/03/15 13:10:37 by bjamin           ###   ########.fr       */
+/*   Created: 2015/12/04 11:27:11 by bjamin            #+#    #+#             */
+/*   Updated: 2016/03/14 18:59:04 by bjamin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <shell.h>
+#include <libft.h>
 
-void	shell_signals_exit(int i)
+void	ft_lstadd_back(t_list **alst, t_list *new)
 {
-	UNUSED(i);
-	signal(SIGQUIT, SIG_DFL);
-}
-
-void	shell_signals(void)
-{
-	/*
-	* signal(SIGINT, shell_signals_exit);
-	*/
+	 while (*alst)
+        alst = &(*alst)->next;
+    *alst = new;
 }

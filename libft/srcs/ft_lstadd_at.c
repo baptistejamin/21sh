@@ -1,26 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_signals.c                                    :+:      :+:    :+:   */
+/*   ft_lstadd_at.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/10 14:06:11 by bjamin            #+#    #+#             */
-/*   Updated: 2016/03/15 13:10:37 by bjamin           ###   ########.fr       */
+/*   Created: 2015/12/04 11:31:19 by bjamin            #+#    #+#             */
+/*   Updated: 2016/03/14 19:01:52 by bjamin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <shell.h>
+#include <libft.h>
 
-void	shell_signals_exit(int i)
+void	ft_lstadd_at(t_list **lst, t_list *new, int at)
 {
-	UNUSED(i);
-	signal(SIGQUIT, SIG_DFL);
-}
+	int		i;
+	t_list	*tmp;
 
-void	shell_signals(void)
-{
-	/*
-	* signal(SIGINT, shell_signals_exit);
-	*/
+	i = 1;
+	tmp = *lst;
+	while (i <= (at - 1))
+	{
+		tmp = tmp->next;
+		if (tmp == NULL)
+			break ;
+		i++;
+	}
+	if (tmp != NULL)
+	{
+		new->next = tmp->next;
+		tmp->next = new;
+	}
+	else
+	{
+		ft_lstadd(lst, new);
+	}
 }

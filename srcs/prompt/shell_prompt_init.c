@@ -12,17 +12,17 @@
 
 #include <shell.h>
 
-int			tputs_putchar(int c)
+void	shell_prompt_add_new(t_sh *sh)
 {
-	t_sh	*sh;
+	t_prompt	prompt;
 
-	sh = shell_recover();
-	write(sh->tty, &c, 1);
-	return (1);
+	prompt.chars = NULL;
+	prompt.cursor_position = 0;
+	ft_lstadd(&sh->history, ft_lstnew(&prompt, sizeof(t_prompt)));
 }
 
 int		shell_prompt_init(t_sh *sh)
-{ 
+{
 	char	buff_env[4096];
 
 	if ((sh->term_name = getenv("TERM")) == NULL)
@@ -32,13 +32,10 @@ int		shell_prompt_init(t_sh *sh)
 	if (tcgetattr(0, &sh->term) == -1)
 		return (0);
 	sh->tty = 1;
-
 	sh->term.c_lflag &= ~(ICANON | ECHO);
 	sh->term.c_cc[VMIN] = 1;
 	sh->term.c_cc[VTIME] = 0;
 	if (tcsetattr(0, TCSADRAIN, &sh->term) == -1)
 		return (0);
-	tputs(tgetstr("te", NULL), 1, tputs_putchar);
-	tputs(tgetstr("ve", NULL), 1, tputs_putchar);
 	return (1);
 }

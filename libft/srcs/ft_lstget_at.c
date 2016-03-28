@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_signals.c                                    :+:      :+:    :+:   */
+/*   ft_lstget_at.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/10 14:06:11 by bjamin            #+#    #+#             */
-/*   Updated: 2016/03/15 13:10:37 by bjamin           ###   ########.fr       */
+/*   Created: 2015/12/04 11:31:19 by bjamin            #+#    #+#             */
+/*   Updated: 2016/03/14 19:01:52 by bjamin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <shell.h>
+#include <libft.h>
 
-void	shell_signals_exit(int i)
+t_list	*ft_lstget_at(t_list *lst, int at)
 {
-	UNUSED(i);
-	signal(SIGQUIT, SIG_DFL);
-}
+	int i;
 
-void	shell_signals(void)
-{
-	/*
-	* signal(SIGINT, shell_signals_exit);
-	*/
+	i = 0;
+	while (lst)
+	{
+		if (i == at)
+			return (lst);
+		lst = lst->next;
+		i++;
+	}
+	return (NULL);
 }

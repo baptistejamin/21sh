@@ -18,6 +18,8 @@ _SRC			= 	shell.c \
 					shell_env.c \
 					shell_errors.c \
 					shell_signals.c \
+					prompt/shell_prompt_display.c \
+					prompt/shell_prompt_input.c \
 					prompt/shell_prompt_init.c \
 					builtins/shell_builtins.c \
 					builtins/shell_builtins_pwd.c \
