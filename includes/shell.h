@@ -18,13 +18,17 @@
 # include <sys/stat.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <termios.h>
+# include <term.h>
+# include <sys/ioctl.h>
 
 # define UNUSED(x) (void)(x)
 # define PATH_MAX 4096
 
 typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
 
-typedef struct stat	t_stat;
+typedef struct termios	t_termios;
+typedef struct stat		t_stat;
 
 typedef struct		s_builtin
 {
@@ -50,20 +54,44 @@ typedef struct		s_env
 typedef struct		s_sh
 {
 	char			**env;
+	char			*term_name;
+	int				tty;
+	t_termios		term;
 	t_list			*env_list;
 	int				last_res;
 	t_builtin		builtins[10];
 }					t_sh;
 
-void				shell_signals();
+t_sh				*shell_recover(void);
+
+/*
+* Prompt
+*/
+int					shell_prompt_init(t_sh *sh);
+
+/*
+* Cmds
+*/
+int					shell_launch_cmd(t_sh *sh, t_list *environ,
+									char *cmd, char **args);
+/*
+* Env
+*/
 void				shell_env_to_list(t_list **list, char **environ);
 void				shell_env_show(t_list *list);
 char				**shell_env_from_list(t_list *list);
 char				*shell_env_get(t_list *list, char *var);
 char				**shell_copy_env(char **env);
 int					shell_count_env(char **env);
-int					shell_launch_cmd(t_sh *sh, t_list *environ,
-									char *cmd, char **args);
+
+/*
+* Signals
+*/
+void				shell_signals(void);
+
+/*
+* Buitlins
+*/
 int					shell_boot(t_sh *sh, t_list *environ, char **cmds);
 void				shell_init_builtins(t_sh *sh);
 int					shell_builtins_exit(void *sh_, t_list *environ,

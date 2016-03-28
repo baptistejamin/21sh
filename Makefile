@@ -18,6 +18,7 @@ _SRC			= 	shell.c \
 					shell_env.c \
 					shell_errors.c \
 					shell_signals.c \
+					prompt/shell_prompt_init.c \
 					builtins/shell_builtins.c \
 					builtins/shell_builtins_pwd.c \
 					builtins/shell_builtins_exit.c \
@@ -38,7 +39,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C ./libft/
-	@gcc $(CFLAGS) $(OBJ) $(LIB) $(INCLUDES) -o $(NAME)
+	@gcc $(CFLAGS) $(OBJ) $(LIB) -L /usr/lib -ltermcap  $(INCLUDES) -o $(NAME)
 	@echo $(NAME)" compiled"
 
 
