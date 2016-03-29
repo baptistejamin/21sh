@@ -18,7 +18,7 @@ void	show_result(t_list *elem)
 	ft_putendl(str);
 }
 
-void	shell_prompt_autocompletion_add_results_from_path(t_list **list, 
+void	shell_prompt_autocompletion_add_results_from_path(t_list **list,
 													char *path, char *search)
 {
 	int			search_len;
@@ -41,51 +41,56 @@ void	shell_prompt_autocompletion_add_results_from_path(t_list **list,
 		closedir(dir);
 }
 
-void	shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
+char	*shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
 {
 	char	*query;
 	char	*query_path;
 
 	query = ft_strrchr(search, '/') + 1;
-	if (!*query)
-		query = ft_strdup("");
 	query_path = ft_strnew(ft_strlen(search) - ft_strlen(query) + 1);
 	ft_strncpy(query_path, search, ft_strlen(search) - ft_strlen(query));
 	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
+	if (ft_lstcount(*list) == 1)
+		return (((char *)((*list)->content)) + ft_strlen(query));
+	return (NULL);
+}
+
+char	*shell_prompt_autocompletion_search_walk_path(t_list **list, char *search)
+{
+	t_sh	*sh;
+	char	*query;
+	char	*query_path;
+	char	**path;
+	char	*tmp;
+	int		i;
+
+	i = 0;
+	sh = shell_recover();
+	query_path = ft_strdup("./");
+	query = search;
+	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
+	path = ft_strsplit(shell_env_get(sh->env_list, "PATH"), ':');
+	while (path[i])
+	{
+		tmp = ft_strfjoin(ft_strjoin(path[i], "/"), query_path);
+		shell_prompt_autocompletion_add_results_from_path(list, tmp, query);
+		i++;
+		free(tmp);
+	}
+	if (path)
+		ft_free_tab(path);
+	if (ft_lstcount(*list) == 1)
+		return (((char *)((*list)->content)) + ft_strlen(query));
+	return (NULL);
 }
 
 char	*shell_prompt_autocompletion(char *search)
 {
-	t_sh	*sh;
-	int		i;
-	char	**path;
-	char	*tmp;
 	t_list	*results;
-	char	*query;
-	char	*query_path;
 
 	results = NULL;
-	sh = shell_recover();
-	i = 0;
 	if (ft_strrchr(search, '/'))
-		shell_prompt_autocompletion_search_as_path(&results, search);
+		return (shell_prompt_autocompletion_search_as_path(&results, search));
 	else
-	{
-		query_path = ft_strdup("./");
-		query = search;
-		shell_prompt_autocompletion_add_results_from_path(&results, query_path, query);
-		path = ft_strsplit(shell_env_get(sh->env_list, "PATH"), ':');
-		while (path[i])
-		{
-			tmp = ft_strfjoin(ft_strjoin(path[i], "/"), query_path);
-			shell_prompt_autocompletion_add_results_from_path(&results, tmp, query);
-			i++;
-			free(tmp);
-		}
-		if (path)
-			ft_free_tab(path);
-	}
-	if (ft_lstcount(results) == 1)
-		return (((char *)(results->content)) + ft_strlen(query));
-	return (NULL);
+		return (shell_prompt_autocompletion_search_walk_path(&results, search));
 }
