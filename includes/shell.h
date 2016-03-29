@@ -50,12 +50,35 @@ enum			e_prompt_status
 	FIRE_CMD
 };
 
+enum			e_cmd
+{
+	PIPE,
+	SEPARATOR,
+	CMD,
+	TO_OUT,
+	APPEND_TO_OUT,
+	TO_IN,
+	APPEND_TO_IN
+};
+
 typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
 
-typedef struct termios	t_termios;
 typedef struct winsize	t_winsize;
 typedef struct stat		t_stat;
 typedef struct dirent	t_dirent;
+
+typedef struct		s_command
+{
+	enum	e_cmd	cmd_type
+	t_list			*next;
+	t_list			*prev;
+}					t_command;
+
+typedef struct termios	t_termios;
+	t_list			*chars;
+	int				cursor_index;
+	int				lenght;
+}					t_prompt;
 
 typedef struct		s_prompt
 {
@@ -63,6 +86,7 @@ typedef struct		s_prompt
 	int				cursor_index;
 	int				lenght;
 }					t_prompt;
+
 
 typedef struct		s_builtin
 {
