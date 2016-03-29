@@ -201,18 +201,28 @@ enum e_prompt_status prompt_delete_next_char(char *buf)
 	return (READING);
 }
 
+void	 prompt_insert_one_char(char car)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&car, sizeof(char)), sh->current_prompt->cursor_index);
+	sh->current_prompt->cursor_index++;
+	sh->current_prompt->lenght++;
+	shell_prompt_display(sh, 1);
+}
+
 enum e_prompt_status prompt_insert_char(char *buf)
 {
 	t_sh		*sh;
 
 	sh = shell_recover();
-	if (buf[0] && !(buf[1]) && !(buf[2]))
-	{
-		ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&buf[0], sizeof(char)), sh->current_prompt->cursor_index);
-		sh->current_prompt->cursor_index++;
-		sh->current_prompt->lenght++;
-		shell_prompt_display(sh, 1);
-	}
+	if (buf[0])
+		prompt_insert_one_char(buf[0]);
+	if (buf[1])
+		prompt_insert_one_char(buf[1]);
+	if (buf[2])
+		prompt_insert_one_char(buf[2]);
 	return (READING);
 }
 
@@ -378,7 +388,7 @@ char		*shell_prompt_input(t_sh *sh)
 	UNUSED(sh);
 	while (read(0, buf, 3))
 	{
-		//printf("\n\n%s %s %s", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]));
+		//printf("\n\n%s %s %s %c %c %c", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]), buf[0], buf[1], buf[2]);
 		status = shell_prompt_boot_function(buf);
 		ft_bzero(buf, 3);
 		if (status == FIRE_CMD)
