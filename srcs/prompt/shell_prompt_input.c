@@ -19,6 +19,62 @@ void	free_char(void *content, size_t size)
 	free(content);
 }
 
+enum e_prompt_status prompt_move_next_word(char *buf)
+{
+	t_sh		*sh;
+	t_list		*cur;
+
+	sh = shell_recover();
+	if (!SHIFT_RIGHT)
+		return (TRYING);
+	while (sh->current_prompt->cursor_index < sh->current_prompt->lenght)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
+		if (*(char *)cur->content != ' ' && *(char *)cur->content != '\t')
+			sh->current_prompt->cursor_index++;
+		else
+			break;
+	}
+	while (sh->current_prompt->cursor_index < sh->current_prompt->lenght)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
+		if (*(char *)cur->content == ' ' || *(char *)cur->content == '\t')
+			sh->current_prompt->cursor_index++;
+		else
+			break;
+	}
+	shell_prompt_display(sh,1 );
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_last_word(char *buf)
+{
+	t_sh		*sh;
+	t_list		*cur;
+
+	sh = shell_recover();
+	if (!SHIFT_LEFT)
+		return (TRYING);
+	while (sh->current_prompt->cursor_index > 0)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index - 1);
+		if (cur && (*(char *)cur->content == ' ' || *(char *)cur->content == '\t'))
+			sh->current_prompt->cursor_index--;
+		else
+			break;
+	}
+	while (sh->current_prompt->cursor_index > 0)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index - 1);
+		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+			sh->current_prompt->cursor_index--;
+		else
+			break;
+	}
+	shell_prompt_display(sh,1 );
+	return (READING);
+}
+
 enum e_prompt_status prompt_move_up(char *buf)
 {
 	t_sh		*sh;
@@ -211,6 +267,8 @@ enum e_prompt_status prompt_fire_cmd(char *buf)
 static void	*shell_prompt_get_functions(void)
 {
 	static enum e_prompt_status	(*f[])(char *) = {
+		prompt_move_next_word,
+		prompt_move_last_word,
 		prompt_move_up,
 		prompt_move_down,
 		prompt_move_right,
