@@ -21,6 +21,9 @@
 # include <termios.h>
 # include <term.h>
 # include <sys/ioctl.h>
+# include <dirent.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 
 # define UNUSED(x) (void)(x)
 # define PATH_MAX 4096
@@ -38,6 +41,7 @@
 # define ENTER ((buf[0] == 10 && buf[1] == 0 && buf[2] == 0))
 # define HOME ((buf[0] == 27 && buf[1] == 91 && buf[2] == 72))
 # define END ((buf[0] == 27 && buf[1] == 91 && buf[2] == 70))
+# define TAB ((buf[0] == 9 && buf[1] == 0 && buf[2] == 0))
 
 enum			e_prompt_status
 {
@@ -51,6 +55,7 @@ typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
 typedef struct termios	t_termios;
 typedef struct winsize	t_winsize;
 typedef struct stat		t_stat;
+typedef struct dirent	t_dirent;
 
 typedef struct		s_prompt
 {
@@ -104,6 +109,8 @@ int					shell_prompt_init(t_sh *sh);
 int					shell_prompt_update_window(t_sh *sh);
 void				shell_prompt_add_new(t_sh *sh);
 char				*shell_prompt_input(t_sh *sh);
+char				*shell_prompt_autocompletion(char *search);
+char 				*shell_prompt_get_command(t_prompt *prompt, size_t start, size_t end);
 
 /*
 * Cmds

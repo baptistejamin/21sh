@@ -21,6 +21,7 @@ _SRC			= 	shell.c \
 					prompt/shell_prompt_display.c \
 					prompt/shell_prompt_input.c \
 					prompt/shell_prompt_init.c \
+					prompt/autocompletion/shell_prompt_autocompletion.c \
 					builtins/shell_builtins.c \
 					builtins/shell_builtins_pwd.c \
 					builtins/shell_builtins_exit.c \

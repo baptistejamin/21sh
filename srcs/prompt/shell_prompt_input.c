@@ -252,6 +252,51 @@ enum e_prompt_status prompt_move_to_next_prompt(char *buf)
 	return (READING);
 }
 
+enum e_prompt_status prompt_autocompletion(char *buf)
+{
+	t_sh		*sh;
+	t_list		*cur;
+	char		*search;
+	int			start_position;
+	char 		*result;
+
+	sh = shell_recover();
+	if (!TAB)
+		return (TRYING);
+	while (sh->current_prompt->cursor_index > 0 && 
+		sh->current_prompt->cursor_index < sh->current_prompt->lenght)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
+		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+			sh->current_prompt->cursor_index++;
+		else
+			break;
+	}
+	start_position = sh->current_prompt->cursor_index;
+	while (start_position > 0)
+	{
+		cur = ft_lstget_at(sh->current_prompt->chars, start_position - 1);
+		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+			start_position--;
+		else
+			break;
+	}
+	search = shell_prompt_get_command(sh->current_prompt, start_position, sh->current_prompt->cursor_index);
+	result =  shell_prompt_autocompletion(search);
+	if (result)
+	{
+		while (result && *result)
+		{
+			ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&result[0], sizeof(char)), sh->current_prompt->cursor_index);
+			sh->current_prompt->cursor_index++;
+			sh->current_prompt->lenght++;
+			result++;
+		}
+	}
+	shell_prompt_display(sh, 1);
+	return (READING);
+}
+
 enum e_prompt_status prompt_fire_cmd(char *buf)
 {
 	t_sh		*sh;
@@ -280,6 +325,7 @@ static void	*shell_prompt_get_functions(void)
 		prompt_fire_cmd,
 		prompt_move_to_last_prompt,
 		prompt_move_to_next_prompt,
+		prompt_autocompletion,
 		prompt_insert_char,
 		NULL
 	};
@@ -302,15 +348,16 @@ enum e_prompt_status	shell_prompt_boot_function(char *buf)
 	return (status);
 }
 
-char 		*shell_prompt_get_command(t_prompt *prompt)
+char 		*shell_prompt_get_command(t_prompt *prompt, size_t start, size_t end)
 {
 	char	*cmd;
 	t_list	*cur;
-	int 	i = 0;
+	size_t 	i; 
 
-	cmd = malloc(sizeof(char) * (prompt->lenght + 1));
-	cur = prompt->chars;
-	while (cur)
+	i = 0;
+	cmd = malloc(sizeof(char) * ((end - start) + 1));
+	cur = ft_lstget_at(prompt->chars, start);
+	while (cur && i < (end - start))
 	{
 		cmd[i] = *(char *)cur->content;
 		cur = cur->next;
@@ -329,11 +376,11 @@ char		*shell_prompt_input(t_sh *sh)
 	UNUSED(sh);
 	while (read(0, buf, 3))
 	{
-		//printf("\n%s %s %s", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]));
+		//printf("\n\n%s %s %s", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]));
 		status = shell_prompt_boot_function(buf);
 		ft_bzero(buf, 3);
 		if (status == FIRE_CMD)
-			return (shell_prompt_get_command(sh->current_prompt));
+			return (shell_prompt_get_command(sh->current_prompt, 0, sh->current_prompt->lenght));
 	}
 	return ("");
 }
