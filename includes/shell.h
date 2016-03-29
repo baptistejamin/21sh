@@ -24,13 +24,20 @@
 
 # define UNUSED(x) (void)(x)
 # define PATH_MAX 4096
+
+# define SHIFT_UP ((buf[0] == 59 && buf[1] == 50 && buf[2] == 65))
 # define UP ((buf[0] == 27 && buf[1] == 91 && buf[2] == 65))
+# define SHIFT_DOWN ((buf[0] == 59 && buf[1] == 50 && buf[2] == 66))
 # define DOWN ((buf[0] == 27 && buf[1] == 91 && buf[2] == 66))
+# define SHIFT_RIGHT ((buf[0] == 59 && buf[1] == 50 && buf[2] == 67))
 # define RIGHT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 67))
+# define SHIFT_LEFT ((buf[0] == 59 && buf[1] == 50 && buf[2] == 68))
 # define LEFT ((buf[0] == 27 && buf[1] == 91 && buf[2] == 68))
 # define BACK_SPACE ((buf[0] == 127 && buf[1] == 0 && buf[2] == 0))
 # define DELETE ((buf[0] == 27 && buf[1] == 91 && buf[2] == 51))
 # define ENTER ((buf[0] == 10 && buf[1] == 0 && buf[2] == 0))
+# define HOME ((buf[0] == 27 && buf[1] == 91 && buf[2] == 72))
+# define END ((buf[0] == 27 && buf[1] == 91 && buf[2] == 70))
 
 enum			e_prompt_status
 {
@@ -49,6 +56,7 @@ typedef struct		s_prompt
 {
 	t_list			*chars;
 	int				cursor_index;
+	int				lenght;
 }					t_prompt;
 
 typedef struct		s_builtin
@@ -91,7 +99,7 @@ t_sh				*shell_recover(void);
 * Prompt
 */
 int					tputs_putchar(int c);
-int					shell_prompt_display(t_sh *sh);
+int					shell_prompt_display(t_sh *sh, int show_cursor);
 int					shell_prompt_init(t_sh *sh);
 int					shell_prompt_update_window(t_sh *sh);
 void				shell_prompt_add_new(t_sh *sh);

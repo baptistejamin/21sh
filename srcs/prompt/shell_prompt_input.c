@@ -19,6 +19,37 @@ void	free_char(void *content, size_t size)
 	free(content);
 }
 
+enum e_prompt_status prompt_move_up(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!SHIFT_UP)
+		return (TRYING);
+	if (sh->current_prompt->cursor_index - sh->win.ws_col >= 0)
+		sh->current_prompt->cursor_index -= sh->win.ws_col;
+	else
+		sh->current_prompt->cursor_index = 0;
+	shell_prompt_display(sh,1 );;
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_down(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!SHIFT_DOWN)
+		return (TRYING);
+	if (sh->current_prompt->cursor_index + sh->win.ws_col <= sh->current_prompt->lenght)
+		sh->current_prompt->cursor_index += sh->win.ws_col;
+	else
+		sh->current_prompt->cursor_index = sh->current_prompt->lenght;
+	shell_prompt_display(sh,1 );;
+	return (READING);
+}
+
+
 enum e_prompt_status prompt_move_right(char *buf)
 {
 	t_sh		*sh;
@@ -26,11 +57,13 @@ enum e_prompt_status prompt_move_right(char *buf)
 	sh = shell_recover();
 	if (!RIGHT)
 		return (TRYING);
-	if (sh->current_prompt->cursor_index < ft_lstcount(sh->current_prompt->chars))
+	if (sh->current_prompt->cursor_index < sh->current_prompt->lenght)
 	{
 		sh->current_prompt->cursor_index++;
-		shell_prompt_display(sh);
+		shell_prompt_display(sh,1 );
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	return (READING);
 }
 
@@ -44,8 +77,34 @@ enum e_prompt_status prompt_move_left(char *buf)
 	if (sh->current_prompt->cursor_index > 0)
 	{
 		sh->current_prompt->cursor_index--;
-		shell_prompt_display(sh);
+		shell_prompt_display(sh, 1);
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_start(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!HOME)
+		return (TRYING);
+	sh->current_prompt->cursor_index = 0;
+	shell_prompt_display(sh, 1);
+	return (READING);
+}
+
+enum e_prompt_status prompt_move_end(char *buf)
+{
+	t_sh		*sh;
+
+	sh = shell_recover();
+	if (!END)
+		return (TRYING);
+	sh->current_prompt->cursor_index = sh->current_prompt->lenght;
+	shell_prompt_display(sh, 1);
 	return (READING);
 }
 
@@ -60,8 +119,11 @@ enum e_prompt_status prompt_delete_char(char *buf)
 	{
 		ft_lstdel_at(&sh->current_prompt->chars, sh->current_prompt->cursor_index - 1, &free_char);
 		sh->current_prompt->cursor_index--;
-		shell_prompt_display(sh);
+		sh->current_prompt->lenght--;
+		shell_prompt_display(sh, 1);
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	return (READING);
 }
 
@@ -75,8 +137,11 @@ enum e_prompt_status prompt_delete_next_char(char *buf)
 	if (sh->current_prompt->cursor_index > 0)
 	{
 		ft_lstdel_at(&sh->current_prompt->chars, sh->current_prompt->cursor_index, &free_char);
-		shell_prompt_display(sh);
+		sh->current_prompt->lenght--;
+		shell_prompt_display(sh, 1);
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	return (READING);
 }
 
@@ -89,7 +154,8 @@ enum e_prompt_status prompt_insert_char(char *buf)
 	{
 		ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&buf[0], sizeof(char)), sh->current_prompt->cursor_index);
 		sh->current_prompt->cursor_index++;
-		shell_prompt_display(sh);
+		sh->current_prompt->lenght++;
+		shell_prompt_display(sh, 1);
 	}
 	return (READING);
 }
@@ -105,8 +171,10 @@ enum e_prompt_status prompt_move_to_last_prompt(char *buf)
 	{
 		sh->prompt_position++;
 		sh->current_prompt = ft_lstget_at(sh->history, sh->prompt_position)->content;
-		shell_prompt_display(sh);
+		shell_prompt_display(sh, 1);
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	return (READING);
 }
 
@@ -121,15 +189,21 @@ enum e_prompt_status prompt_move_to_next_prompt(char *buf)
 	{
 		sh->prompt_position--;
 		sh->current_prompt = ft_lstget_at(sh->history, sh->prompt_position)->content;
-		shell_prompt_display(sh);
+		shell_prompt_display(sh, 1);
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	return (READING);
 }
 
 enum e_prompt_status prompt_fire_cmd(char *buf)
 {
+	t_sh		*sh;
+
+	sh = shell_recover();
 	if (!ENTER)
 		return (TRYING);
+	shell_prompt_display(sh, 0);
 	tputs(tgetstr("do", NULL), 0, tputs_putchar);
 	return (FIRE_CMD);
 }
@@ -137,8 +211,12 @@ enum e_prompt_status prompt_fire_cmd(char *buf)
 static void	*shell_prompt_get_functions(void)
 {
 	static enum e_prompt_status	(*f[])(char *) = {
+		prompt_move_up,
+		prompt_move_down,
 		prompt_move_right,
 		prompt_move_left,
+		prompt_move_start,
+		prompt_move_end,
 		prompt_delete_char,
 		prompt_delete_next_char,
 		prompt_fire_cmd,
@@ -172,7 +250,7 @@ char 		*shell_prompt_get_command(t_prompt *prompt)
 	t_list	*cur;
 	int 	i = 0;
 
-	cmd = malloc(sizeof(char) * (ft_lstcount(prompt->chars) + 1));
+	cmd = malloc(sizeof(char) * (prompt->lenght + 1));
 	cur = prompt->chars;
 	while (cur)
 	{

@@ -18,6 +18,7 @@ void	shell_prompt_add_new(t_sh *sh)
 
 	prompt.chars = NULL;
 	prompt.cursor_index = 0;
+	prompt.lenght = 0;
 	ft_lstadd(&sh->history, ft_lstnew(&prompt, sizeof(t_prompt)));
 	sh->current_prompt = sh->history->content;
 }
