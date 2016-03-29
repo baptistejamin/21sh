@@ -209,7 +209,6 @@ void	 prompt_insert_one_char(char car)
 	ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&car, sizeof(char)), sh->current_prompt->cursor_index);
 	sh->current_prompt->cursor_index++;
 	sh->current_prompt->lenght++;
-	shell_prompt_display(sh, 1);
 }
 
 enum e_prompt_status prompt_insert_char(char *buf)
@@ -223,6 +222,7 @@ enum e_prompt_status prompt_insert_char(char *buf)
 		prompt_insert_one_char(buf[1]);
 	if (buf[2])
 		prompt_insert_one_char(buf[2]);
+	shell_prompt_display(sh, 1);
 	return (READING);
 }
 
@@ -297,9 +297,7 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 	{
 		while (result && *result)
 		{
-			ft_lstadd_at(&sh->current_prompt->chars, ft_lstnew(&result[0], sizeof(char)), sh->current_prompt->cursor_index);
-			sh->current_prompt->cursor_index++;
-			sh->current_prompt->lenght++;
+			prompt_insert_one_char(*result);
 			result++;
 		}
 	}
