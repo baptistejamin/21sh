@@ -293,6 +293,8 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 			result++;
 		}
 	}
+	else
+		tputs(tgetstr("bl", NULL), 0, tputs_putchar);
 	shell_prompt_display(sh, 1);
 	return (READING);
 }

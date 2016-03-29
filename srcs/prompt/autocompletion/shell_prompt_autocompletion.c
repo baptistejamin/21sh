@@ -12,33 +12,61 @@
 
 #include <shell.h>
 
-void	show_result(t_list *elem)
+char	*shell_prompt_autocompletion_compute(t_list *cur, t_list *list,
+												char *query)
 {
-	char *str = elem->content;
-	ft_putendl(str);
+	char	*result;
+	int		i;
+
+	i = ft_strlen(query) - 1;
+	result = ft_strdup(query);
+	while (++i != -1 && (cur = list))
+	{
+		while (cur && i != -1)
+		{
+			if (ft_strncmp(result, cur->content, i) != 0)
+			{
+				result = ft_strdup(cur->content);
+				result[i - 1] = 0;
+				i = -1;
+				return (result + ft_strlen(query));
+			}
+			else
+			{
+				free(result);
+				result = ft_strdup(cur->content);
+			}
+			cur = cur->next;
+		}
+	}
+	return (NULL);
 }
 
 void	shell_prompt_autocompletion_add_results_from_path(t_list **list,
 													char *path, char *search)
 {
-	int			search_len;
-	int			results;
+	char		*full_path;
 	t_dirent	*dirent;
-	DIR 		*dir;
+	DIR			*dir;
+	t_stat		stat;
 
-	results = 0;
 	dir = opendir(path);
-	search_len = ft_strlen(search);
-	while (dir != NULL && ((dirent = readdir(dir)) != NULL) && (results < 2))
+	while (dir != NULL && ((dirent = readdir(dir)) != NULL))
 	{
-		if (dirent->d_name[0] != '.' && ft_strncmp(dirent->d_name, search, search_len) == 0)
+		if (dirent->d_name[0] != '.' && ft_strncmp(dirent->d_name, search,
+			ft_strlen(search)) == 0)
 		{
-			ft_lstadd(list, ft_lstnew(dirent->d_name, ft_strlen(dirent->d_name) + 1));
-			results++;
+			full_path = ft_strfjoin(ft_strjoin(path, "/"), dirent->d_name);
+			lstat(full_path, &stat);
+			free(full_path);
+			full_path = ft_strdup(dirent->d_name);
+			if (S_ISDIR(stat.st_mode))
+				full_path = ft_strfjoin(full_path, "/");
+			ft_lstadd(list, ft_lstnew(full_path, ft_strlen(full_path) + 1));
+			free(full_path);
 		}
 	}
-	if (dir)
-		closedir(dir);
+	dir = closedir(dir) ? NULL : NULL;
 }
 
 char	*shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
@@ -52,12 +80,14 @@ char	*shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
 	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
 	if (ft_lstcount(*list) == 1)
 		return (((char *)((*list)->content)) + ft_strlen(query));
-	return (NULL);
+	if (ft_lstcount(*list) == 0)
+		return (NULL);
+	return (shell_prompt_autocompletion_compute(*list, *list, query));
 }
 
-char	*shell_prompt_autocompletion_search_walk_path(t_list **list, char *search)
+char	*shell_prompt_autocompletion_search_env(t_sh *sh, t_list **list,
+												char *search)
 {
-	t_sh	*sh;
 	char	*query;
 	char	*query_path;
 	char	**path;
@@ -65,7 +95,6 @@ char	*shell_prompt_autocompletion_search_walk_path(t_list **list, char *search)
 	int		i;
 
 	i = 0;
-	sh = shell_recover();
 	query_path = ft_strdup("./");
 	query = search;
 	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
@@ -81,16 +110,20 @@ char	*shell_prompt_autocompletion_search_walk_path(t_list **list, char *search)
 		ft_free_tab(path);
 	if (ft_lstcount(*list) == 1)
 		return (((char *)((*list)->content)) + ft_strlen(query));
-	return (NULL);
+	if (ft_lstcount(*list) == 0)
+		return (NULL);
+	return (shell_prompt_autocompletion_compute(*list, *list, query));
 }
 
 char	*shell_prompt_autocompletion(char *search)
 {
+	t_sh	*sh;
 	t_list	*results;
 
+	sh = shell_recover();
 	results = NULL;
 	if (ft_strrchr(search, '/'))
 		return (shell_prompt_autocompletion_search_as_path(&results, search));
 	else
-		return (shell_prompt_autocompletion_search_walk_path(&results, search));
+		return (shell_prompt_autocompletion_search_env(sh, &results, search));
 }
