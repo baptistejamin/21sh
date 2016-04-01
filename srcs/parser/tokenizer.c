@@ -45,7 +45,7 @@ static int tokenizer_string(char **s, char *end)
 {
 	while(*s < end && !ft_strchr(WHITESPACES, **s) &&
 		!ft_strchr(TOKENS, **s))
-		s++;
+		(*s)++;
 	return ('a');
 }
 

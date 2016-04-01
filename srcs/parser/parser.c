@@ -97,7 +97,6 @@ t_cmd		*shell_parser_exec(char **p_input, char *end)
 			ft_putendl_fd("Too long", 1);
 			exit(0);
 		}
-		printf("tok = %c\n", tok);
 		cmd->argv[argc] = ft_strndup(new_cmd, new_cmd_end - new_cmd);
 		ret = shell_parser_redirection(ret, p_input, end);
 		argc++;
