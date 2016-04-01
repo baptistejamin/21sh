@@ -30,7 +30,7 @@ enum e_prompt_status prompt_move_next_word(char *buf)
 	while (sh->current_prompt->cursor_index < sh->current_prompt->lenght)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
-		if (*(char *)cur->content != ' ' && *(char *)cur->content != '\t')
+		if (cur && !ft_isspace(*(char *)cur->content))
 			sh->current_prompt->cursor_index++;
 		else
 			break;
@@ -38,7 +38,7 @@ enum e_prompt_status prompt_move_next_word(char *buf)
 	while (sh->current_prompt->cursor_index < sh->current_prompt->lenght)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
-		if (*(char *)cur->content == ' ' || *(char *)cur->content == '\t')
+		if (cur && ft_isspace(*(char *)cur->content))
 			sh->current_prompt->cursor_index++;
 		else
 			break;
@@ -58,7 +58,7 @@ enum e_prompt_status prompt_move_last_word(char *buf)
 	while (sh->current_prompt->cursor_index > 0)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index - 1);
-		if (cur && (*(char *)cur->content == ' ' || *(char *)cur->content == '\t'))
+		if (cur && ft_isspace(*(char *)cur->content))
 			sh->current_prompt->cursor_index--;
 		else
 			break;
@@ -66,7 +66,7 @@ enum e_prompt_status prompt_move_last_word(char *buf)
 	while (sh->current_prompt->cursor_index > 0)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index - 1);
-		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+		if (cur && !ft_isspace(*(char *)cur->content))
 			sh->current_prompt->cursor_index--;
 		else
 			break;
@@ -277,7 +277,7 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 		sh->current_prompt->cursor_index < sh->current_prompt->lenght)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, sh->current_prompt->cursor_index);
-		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+		if (cur && !ft_isspace(*(char *)cur->content))
 			sh->current_prompt->cursor_index++;
 		else
 			break;
@@ -286,7 +286,7 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 	while (start_position > 0)
 	{
 		cur = ft_lstget_at(sh->current_prompt->chars, start_position - 1);
-		if (cur && (*(char *)cur->content != ' ' && *(char *)cur->content != '\t'))
+		if (cur && !ft_isspace(*(char *)cur->content))
 			start_position--;
 		else
 			break;

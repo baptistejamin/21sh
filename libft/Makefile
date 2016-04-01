@@ -32,7 +32,8 @@ _SRC			= ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c \
 					ft_str_to_tab.c ft_strfjoin.c get_next_line.c \
 					ft_lstiter_if.c ft_lstsort.c ft_lstrev.c ft_free_tab.c \
 					ft_is_in.c ft_lstdel_at.c ft_lstcount.c ft_lstcpy.c \
-					ft_lstadd_back.c ft_lstget_at.c ft_lstadd_at.c
+					ft_lstadd_back.c ft_lstget_at.c ft_lstadd_at.c \
+					ft_isspace.c
 
 SRC				= $(addprefix srcs/,$(_SRC))
 INCLUDES		= ./includes/

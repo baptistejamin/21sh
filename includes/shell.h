@@ -50,15 +50,19 @@ enum			e_prompt_status
 	FIRE_CMD
 };
 
-enum			e_cmd
+enum			e_token
 {
 	PIPE,
 	SEPARATOR,
-	CMD,
 	TO_OUT,
 	APPEND_TO_OUT,
 	TO_IN,
-	APPEND_TO_IN
+	APPEND_TO_IN,
+	SUB_CMD,
+	CMD,
+	STRING,
+	IS_FILE,
+	END_OF_CMD
 };
 
 typedef int	(*t_func)(void *sh, t_list *environ, char **cmds);
@@ -68,11 +72,20 @@ typedef struct stat		t_stat;
 typedef struct dirent	t_dirent;
 typedef struct termios	t_termios;
 
+typedef struct		s_tokenizer
+{
+	int				position;
+	char			*input;
+	int 			current_command;
+	t_list 			*commands;
+}					t_tokenizer;
+
 typedef struct		s_command
 {
-	enum e_cmd	cmd_type;
-	t_list			*next;
-	t_list			*prev;
+	enum e_token	cmd_type;
+	int				start_position;
+	int				end_position;
+	char 			**cmds;
 }					t_command;
 
 typedef struct		s_prompt
@@ -150,6 +163,11 @@ int					shell_count_env(char **env);
 * Signals
 */
 void				shell_signals(void);
+
+/*
+* Parsing
+*/
+t_list				*parser(t_sh *sh, char *input);
 
 /*
 * Buitlins

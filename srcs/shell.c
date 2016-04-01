@@ -31,7 +31,6 @@ static int		shell(t_sh *sh)
 		if (!is_last_cmd_empty)
 			shell_prompt_add_new(sh);
 		shell_prompt_display(sh, 1);
-		//shell_prompt_autocompletion("libft/includes");
 		cmd = shell_prompt_input(sh);
 		cmd = ft_strfjoin(cmd, " ");
 		cmds = ft_str_to_tab(cmd);

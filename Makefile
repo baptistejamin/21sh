@@ -31,7 +31,8 @@ _SRC			= 	shell.c \
 					builtins/shell_builtins_setenv.c \
 					builtins/shell_builtins_unsetenv.c \
 					builtins/helpers/shell_builtins_options_parser.c \
-					builtins/helpers/shell_builtins_helpers_cd.c
+					builtins/helpers/shell_builtins_helpers_cd.c \
+					parsing/parser.c \
 
 INCLUDES		= -I./libft/includes/ -I./includes/
 SRC				= $(addprefix srcs/,$(_SRC))
