@@ -15,6 +15,7 @@
 
 # include <libft.h>
 # include "prompt.h"
+# include "parser.h"
 # include <unistd.h>
 # include <sys/stat.h>
 # include <stdlib.h>

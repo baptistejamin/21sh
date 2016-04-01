@@ -33,6 +33,7 @@ static int		shell(t_sh *sh)
 			shell_prompt_add_new();
 		shell_prompt_display(1);
 		cmd = shell_prompt_input();
+		shell_parser(cmd);
 		cmd = ft_strfjoin(cmd, " ");
 		cmds = ft_str_to_tab(cmd);
 		shell_boot(sh, sh->env_list, cmds);

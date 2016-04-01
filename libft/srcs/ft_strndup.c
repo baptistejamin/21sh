@@ -1,20 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/03/10 14:06:11 by bjamin            #+#    #+#             */
-/*   Updated: 2016/03/15 13:10:37 by bjamin           ###   ########.fr       */
+/*   Created: 2015/11/26 14:46:42 by bjamin            #+#    #+#             */
+/*   Updated: 2016/03/14 18:58:59 by bjamin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <shell.h>
+#include <libft.h>
+#include <stdlib.h>
 
-t_list		*parser(t_sh *sh, char *input)
+char	*ft_strndup(const char *s1, size_t n)
 {
-	UNUSED(sh);
-  UNUSED(input);
-  return (NULL);
+	char	*s2;
+	size_t	i;
+
+	i = 0;
+	s2 = (char *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	if (!s2)
+		return (NULL);
+	while (s1[i] && i < n)
+	{
+		s2[i] = s1[i];
+		i++;
+	}
+	s2[i] = '\0';
+	return (s2);
 }
