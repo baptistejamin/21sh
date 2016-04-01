@@ -57,7 +57,7 @@ typedef	struct	s_pipe_cmd
 	t_cmd					*right;
 }								t_pipe_cmd;
 
-int 		tokonizer(char **p_input, char *end, char **new_cmd, char **new_cmd_end);
+int 		tokenizer(char **p_input, char *end, char **new_cmd, char **new_cmd_end);
 t_cmd		*shell_parser(char *input);
 t_cmd		*shell_parser_new_exec_cmd(void);
 t_cmd		*shell_parser_new_redirection_cmd(t_cmd *subcmd, char *file, int mode, int fd);

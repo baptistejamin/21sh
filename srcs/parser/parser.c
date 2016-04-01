@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <shell.h>
-
+#include <stdio.h>
 
 t_cmd	*shell_parser_new_exec_cmd(void)
 {
@@ -56,8 +56,8 @@ t_cmd	*shell_parser_redirection(t_cmd *cmd, char **p_input, char *end)
   {
 		if ((**p_input == '1' || **p_input == '2') && (*p_input)[1] != '>')
 			break;
-		tok = tokonizer(p_input, end, 0, 0);
-		tokonizer(p_input, end, &q, &eq);
+		tok = tokenizer(p_input, end, 0, 0);
+		tokenizer(p_input, end, &q, &eq);
 		if (tok == '<')
 			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDONLY, 0);
 		if (tok == '>')
@@ -88,10 +88,16 @@ t_cmd		*shell_parser_exec(char **p_input, char *end)
 	ret = shell_parser_redirection(ret, p_input, end);
 	while (*p_input < end)
 	{
-		if((tok = tokonizer(p_input, end, &new_cmd, &new_cmd_end)) == 0)
+		if((tok = tokenizer(p_input, end, &new_cmd, &new_cmd_end)) == 0)
 			break;
 		if(tok != 'a')
 			ft_putendl_fd("Syntax error", 1);
+		if (argc >= MAXARGS)
+		{
+			ft_putendl_fd("Too long", 1);
+			exit(0);
+		}
+		printf("tok = %c\n", tok);
 		cmd->argv[argc] = ft_strndup(new_cmd, new_cmd_end - new_cmd);
 		ret = shell_parser_redirection(ret, p_input, end);
 		argc++;
