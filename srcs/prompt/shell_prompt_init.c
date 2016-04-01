@@ -12,8 +12,11 @@
 
 #include <shell.h>
 
-void	shell_prompt_add_new(t_sh *sh)
+void	shell_prompt_add_new(void)
 {
+	t_sh 	*sh;
+
+	sh = shell_recover();
 	t_prompt	prompt;
 
 	prompt.chars = NULL;
@@ -23,10 +26,12 @@ void	shell_prompt_add_new(t_sh *sh)
 	sh->current_prompt = sh->history->content;
 }
 
-int		shell_prompt_init(t_sh *sh)
+int		shell_prompt_init(void)
 {
 	char	buff_env[4096];
+	t_sh 	*sh;
 
+	sh = shell_recover();
 	if ((sh->term_name = getenv("TERM")) == NULL)
 		return (0);
 	if (tgetent(buff_env, sh->term_name) != 1)
@@ -40,11 +45,14 @@ int		shell_prompt_init(t_sh *sh)
 	sh->prompt_position = 0;
 	if (tcsetattr(0, TCSADRAIN, &sh->term) == -1)
 		return (0);
-	shell_prompt_update_window(sh);
+	shell_prompt_update_window();
 	return (1);
 }
 
-int		shell_prompt_update_window(t_sh *sh)
+int		shell_prompt_update_window(void)
 {
+	t_sh *sh;
+
+	sh = shell_recover();
 	return (ioctl(0, TIOCGWINSZ, &sh->win) != -1);
 }

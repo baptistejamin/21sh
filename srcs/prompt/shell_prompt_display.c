@@ -12,7 +12,6 @@
 
 #include <shell.h>
 #include <stdio.h>
-
 int		tputs_putchar(int c)
 {
 	t_sh	*sh;
@@ -51,13 +50,15 @@ static void		shell_prompt_update_cursor_to_start(t_sh *sh)
 	}
 }
 
-int		shell_prompt_display(t_sh *sh, int show_cursor)
+int		shell_prompt_display(int show_cursor)
 {
 	int			i;
 	t_list		*char_list;
 	char		current_char;
 	int			printed_chars;
+	t_sh 		*sh;
 
+	sh = shell_recover();
 	tputs(tgetstr("vi", NULL), 0, tputs_putchar);
 	shell_prompt_update_cursor_to_start(sh);
 	tputs(tgetstr("cd", NULL), 0, tputs_putchar);

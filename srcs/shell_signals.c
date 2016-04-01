@@ -21,8 +21,8 @@ static void	shell_signals_exit(int i)
 static	void	shell_signals_resize(int i)
 {
 	UNUSED(i);
-	shell_prompt_update_window(shell_recover());
-	shell_prompt_display(shell_recover(), 1);
+	shell_prompt_update_window();
+	shell_prompt_display(1);
 }
 
 

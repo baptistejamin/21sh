@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <prompt.h>
 #include <shell.h>
 
 t_sh			*shell_recover(void)
@@ -29,9 +30,9 @@ static int		shell(t_sh *sh)
 	while (1)
 	{
 		if (!is_last_cmd_empty)
-			shell_prompt_add_new(sh);
-		shell_prompt_display(sh, 1);
-		cmd = shell_prompt_input(sh);
+			shell_prompt_add_new();
+		shell_prompt_display(1);
+		cmd = shell_prompt_input();
 		cmd = ft_strfjoin(cmd, " ");
 		cmds = ft_str_to_tab(cmd);
 		shell_boot(sh, sh->env_list, cmds);
@@ -52,9 +53,9 @@ int				main(int argc, char **argv, char **environ)
 
 	UNUSED(argv);
 	sh = shell_recover();
-	shell_prompt_init(sh);
+	shell_prompt_init();
 	if (argc > 1)
-	{
+	{ 
 		ft_putendl_fd("21sh cannot execute commands", 2);
 		return (0);
 	}
