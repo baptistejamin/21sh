@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_prompt_autocompletion.c                      :+:      :+:    :+:   */
+/*   shell_autocompletion.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include <shell.h>
 
-char	*shell_prompt_autocompletion_compute(t_list *cur, t_list *list,
+char	*shell_autocompletion_compute(t_list *cur, t_list *list,
 												char *query)
 {
 	char	*result;
@@ -42,7 +42,7 @@ char	*shell_prompt_autocompletion_compute(t_list *cur, t_list *list,
 	return (NULL);
 }
 
-void	shell_prompt_autocompletion_add_results_from_path(t_list **list,
+void	shell_autocompletion_add_results_from_path(t_list **list,
 													char *path, char *search)
 {
 	char		*full_path;
@@ -69,7 +69,7 @@ void	shell_prompt_autocompletion_add_results_from_path(t_list **list,
 	dir = closedir(dir) ? NULL : NULL;
 }
 
-char	*shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
+char	*shell_autocompletion_search_as_path(t_list **list, char *search)
 {
 	char	*query;
 	char	*query_path;
@@ -77,15 +77,15 @@ char	*shell_prompt_autocompletion_search_as_path(t_list **list, char *search)
 	query = ft_strrchr(search, '/') + 1;
 	query_path = ft_strnew(ft_strlen(search) - ft_strlen(query) + 1);
 	ft_strncpy(query_path, search, ft_strlen(search) - ft_strlen(query));
-	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
+	shell_autocompletion_add_results_from_path(list, query_path, query);
 	if (ft_lstcount(*list) == 1)
 		return (ft_strdup(((char *)((*list)->content)) + ft_strlen(query)));
 	if (ft_lstcount(*list) == 0)
 		return (NULL);
-	return (shell_prompt_autocompletion_compute(*list, *list, query));
+	return (shell_autocompletion_compute(*list, *list, query));
 }
 
-char	*shell_prompt_autocompletion_search_env(t_sh *sh, t_list **list,
+char	*shell_autocompletion_search_env(t_sh *sh, t_list **list,
 												char *search)
 {
 	char	*query;
@@ -97,12 +97,12 @@ char	*shell_prompt_autocompletion_search_env(t_sh *sh, t_list **list,
 	i = 0;
 	query_path = ft_strdup("./");
 	query = search;
-	shell_prompt_autocompletion_add_results_from_path(list, query_path, query);
+	shell_autocompletion_add_results_from_path(list, query_path, query);
 	path = ft_strsplit(shell_env_get(sh->env_list, "PATH"), ':');
 	while (path[i])
 	{
 		tmp = ft_strfjoin(ft_strjoin(path[i], "/"), query_path);
-		shell_prompt_autocompletion_add_results_from_path(list, tmp, query);
+		shell_autocompletion_add_results_from_path(list, tmp, query);
 		i++;
 		free(tmp);
 	}
@@ -112,10 +112,10 @@ char	*shell_prompt_autocompletion_search_env(t_sh *sh, t_list **list,
 		return (ft_strdup(((char *)((*list)->content)) + ft_strlen(query)));
 	if (ft_lstcount(*list) == 0)
 		return (NULL);
-	return (shell_prompt_autocompletion_compute(*list, *list, query));
+	return (shell_autocompletion_compute(*list, *list, query));
 }
 
-char	*shell_prompt_autocompletion(char *search)
+char	*shell_autocompletion(char *search)
 {
 	t_sh	*sh;
 	t_list	*results;
@@ -125,9 +125,9 @@ char	*shell_prompt_autocompletion(char *search)
 	sh = shell_recover();
 	results = NULL;
 	if (ft_strrchr(search, '/'))
-		output = shell_prompt_autocompletion_search_as_path(&results, search);
+		output = shell_autocompletion_search_as_path(&results, search);
 	else
-		output = shell_prompt_autocompletion_search_env(sh, &results, search);
+		output = shell_autocompletion_search_env(sh, &results, search);
 	while (results)
 	{
 		tmp = results->next;

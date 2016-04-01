@@ -71,6 +71,13 @@ t_sh				*shell_recover(void);
 */
 int					shell_launch_cmd(t_sh *sh, t_list *environ,
 									char *cmd, char **args);
+
+/*
+* Autocompletion
+*/
+char				*shell_autocompletion(char *search);
+
+
 /*
 * Env
 */

@@ -289,7 +289,7 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 			break;
 	}
 	search = shell_prompt_get_command(sh->current_prompt, start_position, sh->current_prompt->cursor_index);
-	result =  shell_prompt_autocompletion(search);
+	result =  shell_autocompletion(search);
 	if (result)
 	{
 		while (result && *result)

@@ -60,7 +60,6 @@ int					shell_prompt_init(void);
 int					shell_prompt_update_window(void);
 void				shell_prompt_add_new(void);
 char				*shell_prompt_input(void);
-char				*shell_prompt_autocompletion(char *search);
 char 				*shell_prompt_get_command(t_prompt *prompt, size_t start, size_t end);
 
 #endif
