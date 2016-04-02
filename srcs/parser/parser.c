@@ -60,7 +60,8 @@ t_cmd		*shell_parser_exec(char **p_input, char *end, int *res)
 		if (tok != 'a' && (*res = 0))
 			return (NULL);
 		ft_lstadd_back(&cmd->argv, ft_lstnew(
-			ft_strndup(new_cmd, new_cmd_end - new_cmd), new_cmd_end - new_cmd));
+			ft_strndup(new_cmd, new_cmd_end - new_cmd),
+			new_cmd_end - new_cmd + 1));
 		ret = shell_parser_redirection(ret, p_input, end);
 	}
 	return (ret);
