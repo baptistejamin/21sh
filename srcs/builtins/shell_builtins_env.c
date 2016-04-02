@@ -12,6 +12,12 @@
 
 #include <shell.h>
 
+static int	shell_builtins_env_set_vars_error(void)
+{
+	ft_putendl_fd("Your variables must be alphanumeric", 2);
+	return (-1);
+}
+
 static int	shell_builtins_env_set_vars(t_generic_options *options,
 											t_list **list, char **cmds)
 {
@@ -29,6 +35,8 @@ static int	shell_builtins_env_set_vars(t_generic_options *options,
 			ft_strncpy(var, cmds[i], ft_strlen(cmds[i]) -
 			ft_strlen(ft_strchr(cmds[i], '=')));
 			value = ft_strdup(ft_strchr(cmds[i], '=') + 1);
+			if (ft_strchr(value, '='))
+				return (shell_builtins_env_set_vars_error());
 			shell_builtins_setenv_set(list, var, value);
 			free(var);
 			free(value);
@@ -75,9 +83,9 @@ int			shell_builtins_env(void *sh_, t_list *environ, char **cmds)
 	if (!ft_is_in(options.options, 'i'))
 		ft_envcpy(&new_env, environ);
 	cmd_index = shell_builtins_env_set_vars(&options, &new_env, cmds);
-	if (!cmds[cmd_index])
+	if (cmd_index != -1 && !cmds[cmd_index])
 		shell_env_show(new_env);
-	else
+	else if (cmd_index != -1)
 		shell_boot(sh, new_env, &cmds[cmd_index]);
 	if (new_env)
 		ft_lstdel(&new_env, &shell_builtins_unsetenv_free);

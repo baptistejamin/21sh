@@ -14,7 +14,7 @@
 
 static int	shell_builtins_setenv_error_missing(void)
 {
-	ft_putendl_fd("setenv: You must provide a variable", 2);
+	ft_putendl_fd("setenv: You must provide an alphanumeric variable", 2);
 	return (2);
 }
 
@@ -70,6 +70,8 @@ int			shell_builtins_setenv(void *sh_, t_list *environ, char **cmds)
 		return (shell_builtins_setenv_error_missing());
 	if (cmds[2] && cmds[3])
 		return (shell_builtins_setenv_error_two_many());
+	if (ft_strchr(cmds[1], '=') || ft_strchr(cmds[2], '='))
+		return (shell_builtins_setenv_error_missing());
 	shell_builtins_setenv_set(&sh->env_list, cmds[1], cmds[2]);
 	return (0);
 }

@@ -116,5 +116,6 @@ int					ft_strcut(char **s1, char **s2, char c);
 void				ft_free_tab(char **tab);
 int					get_next_line(int const fd, char **line);
 int					ft_is_in(char *str, char c);
+int					ft_str_alnum(char *str);
 
 #endif
