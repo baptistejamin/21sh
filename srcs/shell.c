@@ -13,7 +13,7 @@
 #include <prompt.h>
 #include <shell.h>
 
-t_sh			*shell_recover(void)
+t_sh					*shell_recover(void)
 {
 	static t_sh	sh;
 
@@ -68,6 +68,19 @@ static int		shell(t_sh *sh)
 	return (0);
 }
 
+static void 	show_welcome(t_sh *sh)
+{
+	int	fd;
+	char *line;
+
+	UNUSED(sh);
+	fd = open(".banner", O_RDWR);
+	while (get_next_line(fd, &line)){
+		ft_putendl(line);
+	}
+	close(fd);
+}
+
 int				main(int argc, char **argv, char **environ)
 {
 	t_sh	*sh;
@@ -81,6 +94,7 @@ int				main(int argc, char **argv, char **environ)
 		ft_putendl_fd("21sh cannot execute commands", 2);
 		return (0);
 	}
+	show_welcome(sh);
 	sh->env_list = NULL;
 	shell_env_to_list(&sh->env_list, environ);
 	if (shell_env_get(sh->env_list, "SHLVL"))
