@@ -40,7 +40,7 @@ static void		shell_signals_resize(int i)
 	shell_prompt_display(1);
 }
 
-static void		shell_signals_handler(i)
+static void		shell_signals_handler(int i)
 {
 	if (i == SIGWINCH)
 		shell_signals_resize(i);
