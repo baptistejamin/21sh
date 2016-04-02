@@ -35,6 +35,8 @@
 # define HOME ((buf[0] == 27 && buf[1] == 91 && buf[2] == 72))
 # define END ((buf[0] == 27 && buf[1] == 91 && buf[2] == 70))
 # define TAB ((buf[0] == 9 && buf[1] == 0 && buf[2] == 0))
+# define IGNORE_1 ((buf[0] == 27 && buf[1] == 91 && buf[2] == 49))
+# define QUIT ((buf[0] == 4 && buf[1] == 0 && buf[2] == 0))
 
 enum			e_prompt_status
 {
@@ -57,6 +59,7 @@ typedef struct		s_prompt
 int					tputs_putchar(int c);
 int					shell_prompt_display(int show_cursor);
 int					shell_prompt_init(void);
+int					shell_prompt_reset(void);
 int					shell_prompt_update_window(void);
 void				shell_prompt_add_new(void);
 char				*shell_prompt_input(void);

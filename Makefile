@@ -14,6 +14,7 @@
 NAME			= 21sh
 LIB				=	./libft/libft.a
 _SRC			= 	shell.c \
+					shell_exit.c \
 					shell_cmd.c \
 					shell_env.c \
 					shell_errors.c \
@@ -35,6 +36,7 @@ _SRC			= 	shell.c \
 					parser/parser.c \
 					parser/tokenizer.c \
 					parser/helpers/shell_parser_helper_strings.c \
+					exec/exec.c
 
 INCLUDES		= -I./libft/includes/ -I./includes/
 SRC				= $(addprefix srcs/,$(_SRC))

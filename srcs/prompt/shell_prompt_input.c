@@ -288,7 +288,7 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 		else
 			break;
 	}
-	search = shell_prompt_get_command(sh->current_prompt, start_position, sh->current_prompt->cursor_index);
+	search = shell_prompt_get_command(sh->current_prompt, start_position, sh->current_prompt->cursor_index + 1);
 	result =  shell_autocompletion(search);
 	if (result)
 	{
@@ -304,6 +304,13 @@ enum e_prompt_status prompt_autocompletion(char *buf)
 	return (READING);
 }
 
+enum e_prompt_status prompt_ignore_input(char *buf)
+{
+	if (!IGNORE_1)
+		return (TRYING);
+	return (READING);
+}
+
 enum e_prompt_status prompt_fire_cmd(char *buf)
 {
 	if (!ENTER)
@@ -311,6 +318,14 @@ enum e_prompt_status prompt_fire_cmd(char *buf)
 	shell_prompt_display(0);
 	tputs(tgetstr("do", NULL), 0, tputs_putchar);
 	return (FIRE_CMD);
+}
+
+enum e_prompt_status prompt_shell_quit(char *buf)
+{
+	if (!QUIT)
+		return (TRYING);
+	shell_exit();
+	return (READING);
 }
 
 static void	*shell_prompt_get_functions(void)
@@ -330,6 +345,8 @@ static void	*shell_prompt_get_functions(void)
 		prompt_move_to_last_prompt,
 		prompt_move_to_next_prompt,
 		prompt_autocompletion,
+		prompt_ignore_input,
+		prompt_shell_quit,
 		prompt_insert_char,
 		NULL
 	};
@@ -387,5 +404,5 @@ char		*shell_prompt_input(void)
 		if (status == FIRE_CMD)
 			return (shell_prompt_get_command(sh->current_prompt, 0, sh->current_prompt->lenght));
 	}
-	return ("");
+	return (NULL);
 }

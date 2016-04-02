@@ -20,29 +20,47 @@ t_sh			*shell_recover(void)
 	return (&sh);
 }
 
+static int		shell_fire_cmds(char *input)
+{
+	t_cmd	*cmd;
+	char	**inputs;
+	int 	i;
+
+	i = 0;
+	inputs = ft_strsplit(input, ';');
+	while (inputs[i])
+	{
+		cmd = shell_parser(inputs[i]);
+		if (cmd)
+			shell_exec(cmd);
+		i++;
+	}
+	if (inputs[0])
+		ft_free_tab(inputs);
+	return (1);
+}
+
+
 static int		shell(t_sh *sh)
 {
-	char *cmd;
-	char **cmds;
-	int	is_last_cmd_empty;
+	char	*input;
+	int		is_last_cmd_empty;
 
+	UNUSED(sh);
 	is_last_cmd_empty = 0;
 	while (1)
 	{
+		shell_prompt_init();
 		if (!is_last_cmd_empty)
 			shell_prompt_add_new();
 		shell_prompt_display(1);
-		cmd = shell_prompt_input();
-		shell_parser(cmd);
-		cmd = ft_strfjoin(cmd, " ");
-		cmds = ft_str_to_tab(cmd);
-		shell_boot(sh, sh->env_list, cmds);
-		is_last_cmd_empty = (cmds[0] == 0);
-		if (cmd)
-			free(cmd);
-		if (cmds)
-			ft_free_tab(cmds);
-		cmds = NULL;
+		input = shell_prompt_input();
+		if (input)
+		{
+			shell_prompt_reset();
+			shell_fire_cmds(input);
+			free(input);
+		}
 	}
 	return (0);
 }
@@ -54,7 +72,8 @@ int				main(int argc, char **argv, char **environ)
 
 	UNUSED(argv);
 	sh = shell_recover();
-	shell_prompt_init();
+	sh->tty = open("/dev/tty", O_RDWR);
+	sh->pid = 0;
 	if (argc > 1)
 	{ 
 		ft_putendl_fd("21sh cannot execute commands", 2);

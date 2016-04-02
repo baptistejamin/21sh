@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_builtins_exit.c                              :+:      :+:    :+:   */
+/*   shell_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,48 +12,16 @@
 
 #include <shell.h>
 
-void		shell_builtins_exit_error_digit(char *param)
+void	shell_exit(void)
 {
-	ft_putstr_fd("exit: ", 2);
-	ft_putstr_fd(param, 2);
-	ft_putstr_fd(": unique numeric argument required\n", 2);
-}
+	t_sh *sh;
 
-int			shell_assert_digit(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
+	sh = shell_recover();
+	if (sh->env_list)
 	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
+		ft_lstdel(&sh->env_list, &shell_builtins_unsetenv_free);
+		free(sh->env_list);
 	}
-	return (1);
-}
-
-int			shell_builtins_exit(void *sh_, t_list *environ, char **cmds)
-{
-	t_sh	*sh;
-
-	sh = (t_sh *)sh_;
-	UNUSED(environ);
-	if (cmds[1])
-	{
-		if (shell_assert_digit(cmds[1]) && !cmds[2])
-		{
-			sh->last_res = ft_atoi(cmds[1]);
-			shell_exit();
-			return (ft_atoi(cmds[1]));
-		}
-		else
-		{
-			shell_builtins_exit_error_digit(cmds[1]);
-			return (2);
-		}
-	}
-	else
-		shell_exit();
-	return (sh->last_res);
+	shell_prompt_reset();
+	exit(sh->last_res);
 }

@@ -32,30 +32,30 @@ typedef enum e_cmd_type	t_cmd_type;
 
 typedef	struct 	s_cmd
 {
-	t_cmd_type 		type;
-}								t_cmd;
+	t_cmd_type 	type;
+}				t_cmd;
 
 typedef struct 	s_exec_cmd
 {
-	t_cmd_type 		type;
-	char 					*argv[MAXARGS];
-}								t_exec_cmd;
+	t_cmd_type 	type;
+	t_list		*argv;
+}				t_exec_cmd;
 
 typedef	struct	s_redirection_cmd
 {
 	t_cmd_type		type;
-	t_cmd					*cmd;
-	char					*file;
-	int						mode;
-	int						fd;
-}								t_redirection_cmd;
+	t_cmd			*cmd;
+	char			*file;
+	int				mode;
+	int				fd;
+}					t_redirection_cmd;
 
 typedef	struct	s_pipe_cmd
 {
 	t_cmd_type		type;
-	t_cmd					*left;
-	t_cmd					*right;
-}								t_pipe_cmd;
+	t_cmd			*left;
+	t_cmd			*right;
+}					t_pipe_cmd;
 
 int 		tokenizer(char **p_input, char *end, char **new_cmd, char **new_cmd_end);
 t_cmd		*shell_parser(char *input);
@@ -66,5 +66,6 @@ int			shell_parser_helper_strings_scan(char **p_input, char *end,
 							char *search, char **new_cmd, char **new_cmd_end);
 int			shell_parser_helper_strings_whitespaces(char **p_input, char *end,
 							char *search);
+
 
 #endif

@@ -1,17 +1,16 @@
 /* ************************************************************************** */
-/*																																						*/
-/*																												:::		  ::::::::   */
-/*   parser.c																				   :+:		  :+:		:+:   */
-/*																										+:+ +:+				 +:+		 */
-/*   By: bjamin <bjamin@student.42.fr>						  +#+  +:+		   +#+				*/
-/*																								+#+#+#+#+#+   +#+				   */
-/*   Created: 2016/03/10 14:06:11 by bjamin						#+#		#+#						 */
-/*   Updated: 2016/03/15 13:10:37 by bjamin				   ###   ########.fr		   */
-/*																																						*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bjamin <bjamin@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/03/10 14:06:11 by bjamin            #+#    #+#             */
+/*   Updated: 2016/03/15 13:10:37 by bjamin           ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include <shell.h>
-#include <stdio.h>
 
 t_cmd	*shell_parser_new_exec_cmd(void)
 {
@@ -54,58 +53,56 @@ t_cmd	*shell_parser_redirection(t_cmd *cmd, char **p_input, char *end)
 
   while(shell_parser_helper_strings_whitespaces(p_input, end, "12<>"))
   {
-		if ((**p_input == '1' || **p_input == '2') && (*p_input)[1] != '>')
+		if ((**p_input == '1' || **p_input == '2') && (*p_input)[1] != '>' && (*p_input)[1] != '<')
 			break;
 		tok = tokenizer(p_input, end, 0, 0);
 		tokenizer(p_input, end, &q, &eq);
 		if (tok == '<')
-			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDONLY, 0);
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_RDONLY | O_NONBLOCK | O_CREAT, 0);
 		if (tok == '>')
-			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDWR | O_CREAT, 1);
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_WRONLY | O_NONBLOCK | O_CREAT | O_TRUNC, 1);
 		if (tok == '+')
-			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDWR | O_CREAT | O_APPEND, 1);
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_WRONLY | O_NONBLOCK | O_CREAT | O_APPEND, 1);
+		if (tok == '=')
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_RDONLY | O_NONBLOCK | O_CREAT | O_APPEND, 0);
 		if (tok == '*')
-			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDWR | O_CREAT, 2);
-		if (tok == '>')
-			cmd = shell_parser_new_redirection_cmd(cmd, q, O_RDWR | O_CREAT | O_APPEND, 2);
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_WRONLY | O_NONBLOCK | O_CREAT | O_TRUNC, 2);
+		if (tok == '/')
+			cmd = shell_parser_new_redirection_cmd(cmd, ft_strndup(q, eq - q + 1), O_WRONLY | O_NONBLOCK | O_CREAT | O_APPEND, 2);
   }
   return (cmd);
 }
 
-
-t_cmd		*shell_parser_exec(char **p_input, char *end)
+t_cmd		*shell_parser_exec(char **p_input, char *end, int *res)
 {
-	char		*new_cmd;
-	char		*new_cmd_end;
-	int			tok;
-	int			argc;
+	char				*new_cmd;
+	char				*new_cmd_end;
+	int					tok;
 	t_exec_cmd	*cmd;
-	t_cmd		*ret;
+	t_cmd				*ret;
+	char 				*str;
 
 	ret = shell_parser_new_exec_cmd();
 	cmd = (t_exec_cmd *)ret;
-	argc = 0;
+	cmd->argv = NULL;
 	ret = shell_parser_redirection(ret, p_input, end);
 	while (*p_input < end)
 	{
 		if((tok = tokenizer(p_input, end, &new_cmd, &new_cmd_end)) == 0)
 			break;
 		if(tok != 'a')
-			ft_putendl_fd("Syntax error", 1);
-		if (argc >= MAXARGS)
 		{
-			ft_putendl_fd("Too long", 1);
-			exit(0);
+			*res = 0;
+			return (NULL);
 		}
-		cmd->argv[argc] = ft_strndup(new_cmd, new_cmd_end - new_cmd);
+		str = ft_strndup(new_cmd, new_cmd_end - new_cmd);
+		ft_lstadd_back(&cmd->argv, ft_lstnew(str, ft_strlen(str)));
 		ret = shell_parser_redirection(ret, p_input, end);
-		argc++;
 	}
-	cmd->argv[argc] = 0;
 	return (ret);
 }
 
-t_cmd		*shell_parser_pipe(char **p_input, char *end)
+t_cmd		*shell_parser_pipe(char **p_input, char *end, int *res)
 {
 	t_cmd	*cmd;
 	char	*new_cmd;
@@ -113,23 +110,29 @@ t_cmd		*shell_parser_pipe(char **p_input, char *end)
 
 	if (shell_parser_helper_strings_scan(p_input, end, "|", &new_cmd, &new_cmd_end))
 	{
-		cmd = shell_parser_exec(&new_cmd, new_cmd_end);
+		cmd = shell_parser_exec(&new_cmd, new_cmd_end, res);
 		(*p_input)++;
-		cmd = shell_parser_new_pipe_cmd(cmd, shell_parser_pipe(p_input, end));
+		cmd = shell_parser_new_pipe_cmd(cmd, shell_parser_pipe(p_input, end, res));
 	}
 	else
-		cmd = shell_parser_exec(&new_cmd, new_cmd_end);
+		cmd = shell_parser_exec(&new_cmd, new_cmd_end, res);
 	return (cmd);
 }
 
 t_cmd		*shell_parser(char *input)
 {
-	char	*end;
-	t_cmd	*cmd;
+	char		*end;
+	t_cmd		*cmd;
+	int 		res;
 
+	res = 1;
 	end = input + ft_strlen(input);
-	cmd = shell_parser_pipe(&input, end);
-	if(input != end)
-		ft_putendl_fd("Syntax error", 1);
-	return (cmd);
+	cmd = shell_parser_pipe(&input, end, &res);
+	if(input != end || res == 0)
+	{
+		ft_putendl_fd("Syntax error", 2);
+		return (NULL);
+	}
+	else
+		return (cmd);
 }

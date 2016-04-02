@@ -20,6 +20,11 @@ static int tokenizer_redirection(char **s, int ret)
 		(*s)++;
 		return ('+');
 	}
+	if(**s == '<')
+	{
+		(*s)++;
+		return ('=');
+	}
 	return (ret);
 }
 
@@ -60,9 +65,9 @@ int tokenizer(char **p_input, char *end, char **new_cmd, char **new_cmd_end)
 	if(new_cmd)
 		*new_cmd = s;
 	ret = *s;
-	if (*s && ft_is_in("|();&<", *s))
+	if (*s && ft_is_in("|();&", *s))
 		s++;
-	else if (*s && ft_is_in(">", *s))
+	else if (*s && ft_is_in("><", *s))
 		ret = tokenizer_redirection(&s, ret);
 	else if (*s && ft_is_in("12", *s))
 		ret = tokenizer_aggregators(&s, ret);

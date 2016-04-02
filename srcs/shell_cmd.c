@@ -35,16 +35,13 @@ static int	file_cmd(t_sh *sh, t_list *environ, char **cmds)
 int			shell_launch_cmd(t_sh *sh, t_list *environ, char *cmd,
 					char **args)
 {
-	pid_t	pid;
-	int		res;
-
-	UNUSED(sh);
-	res = -1;
-	if ((pid = fork()) != 0)
-		waitpid(pid, &res, 0);
-	else
+	int					pid;
+	if ((pid = fork()) == 0)
 		execve(cmd, args, shell_env_from_list(environ));
-	return (res);
+	else
+		waitpid(pid, 0, 0);
+	UNUSED(sh);
+	return (0);
 }
 
 int			shell_boot_cmd(t_sh *sh, t_list *environ, char **cmds)

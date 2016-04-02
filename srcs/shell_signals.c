@@ -11,11 +11,27 @@
 /* ************************************************************************** */
 
 #include <shell.h>
+#include <stdio.h>
+
+static void	shell_signals_reprompt(int i)
+{
+	t_sh *sh;
+
+	sh = shell_recover();
+	if (!sh->disable_signal_catching)
+	{
+		shell_prompt_display(0);
+		shell_prompt_add_new();
+		ft_putendl("");
+		shell_prompt_display(1);
+	}
+	UNUSED(i);
+}
 
 static void	shell_signals_exit(int i)
 {
 	UNUSED(i);
-	signal(SIGQUIT, SIG_DFL);
+	shell_exit();
 }
 
 static	void	shell_signals_resize(int i)
@@ -31,7 +47,7 @@ static void	shell_signals_events(i)
 	if (i == SIGWINCH)
 		shell_signals_resize(i);
 	else if (i == SIGINT)
-		shell_signals_exit(i);
+		shell_signals_reprompt(i);
 	else if (i == SIGQUIT)
 		shell_signals_exit(i);
 }
@@ -39,5 +55,6 @@ static void	shell_signals_events(i)
 void	shell_signals(void)
 {
 	signal(SIGINT, shell_signals_events);
+	signal(SIGQUIT, shell_signals_events);
 	signal(SIGWINCH, shell_signals_events);
 }
