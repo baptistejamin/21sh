@@ -24,7 +24,7 @@ static int		shell_fire_cmds(char *input)
 {
 	t_cmd	*cmd;
 	char	**inputs;
-	int 	i;
+	int		i;
 
 	i = 0;
 	inputs = ft_strsplit(input, ';');
@@ -39,7 +39,6 @@ static int		shell_fire_cmds(char *input)
 		ft_free_tab(inputs);
 	return (1);
 }
-
 
 static int		shell(t_sh *sh)
 {
@@ -73,9 +72,8 @@ int				main(int argc, char **argv, char **environ)
 	UNUSED(argv);
 	sh = shell_recover();
 	sh->tty = open("/dev/tty", O_RDWR);
-	sh->pid = 0;
 	if (argc > 1)
-	{ 
+	{
 		ft_putendl_fd("21sh cannot execute commands", 2);
 		return (0);
 	}

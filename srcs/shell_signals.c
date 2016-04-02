@@ -11,21 +11,20 @@
 /* ************************************************************************** */
 
 #include <shell.h>
-#include <stdio.h>
 
 static void	shell_signals_reprompt(int i)
 {
 	t_sh *sh;
 
+	UNUSED(i);
 	sh = shell_recover();
 	if (!sh->disable_signal_catching)
 	{
 		shell_prompt_display(0);
 		shell_prompt_add_new();
-		ft_putendl("");
+		ft_putstr("\n");
 		shell_prompt_display(1);
 	}
-	UNUSED(i);
 }
 
 static void	shell_signals_exit(int i)
@@ -40,7 +39,6 @@ static	void	shell_signals_resize(int i)
 	shell_prompt_update_window();
 	shell_prompt_display(1);
 }
-
 
 static void	shell_signals_events(i)
 {

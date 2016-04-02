@@ -34,6 +34,7 @@ _SRC			= 	shell.c \
 					builtins/helpers/shell_builtins_options_parser.c \
 					builtins/helpers/shell_builtins_helpers_cd.c \
 					parser/parser.c \
+					parser/constructors.c \
 					parser/tokenizer.c \
 					parser/helpers/shell_parser_helper_strings.c \
 					exec/exec.c

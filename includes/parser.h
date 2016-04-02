@@ -14,11 +14,19 @@
 # define PARSER_H
 
 #include <libft.h>
+#include <fcntl.h>
 
 //todo, generic allocation
 #define MAXARGS 10
 #define WHITESPACES " \t\r\n\v"
 #define TOKENS "<|>"
+
+
+#define	M_READ (O_RDONLY | O_NONBLOCK | O_CREAT)
+#define M_READ_TRUNC (O_RDONLY | O_NONBLOCK | O_CREAT | O_TRUNC)
+#define M_READ_APPEND (O_RDONLY | O_NONBLOCK | O_CREAT | O_APPEND)
+#define M_WRITE_TRUNC (O_WRONLY | O_NONBLOCK | O_CREAT | O_TRUNC)
+#define M_WRITE_APPEND (O_WRONLY | O_NONBLOCK | O_CREAT | O_APPEND)
 
 enum	e_cmd_type
 {
@@ -62,8 +70,8 @@ t_cmd		*shell_parser(char *input);
 t_cmd		*shell_parser_new_exec_cmd(void);
 t_cmd		*shell_parser_new_redirection_cmd(t_cmd *subcmd, char *file, int mode, int fd);
 t_cmd		*shell_parser_new_pipe_cmd(t_cmd *left, t_cmd *right);
-int			shell_parser_helper_strings_scan(char **p_input, char *end,
-							char *search, char **new_cmd, char **new_cmd_end);
+int			shell_parser_helper_strings_scan_pipes(char **p_input, char *end,
+							char **new_cmd, char **new_cmd_end);
 int			shell_parser_helper_strings_whitespaces(char **p_input, char *end,
 							char *search);
 

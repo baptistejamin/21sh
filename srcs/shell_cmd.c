@@ -36,6 +36,7 @@ int			shell_launch_cmd(t_sh *sh, t_list *environ, char *cmd,
 					char **args)
 {
 	int					pid;
+
 	if ((pid = fork()) == 0)
 		execve(cmd, args, shell_env_from_list(environ));
 	else
