@@ -65,7 +65,7 @@ typedef struct		s_sh
 	t_list			*history;
 	int				prompt_position;
 	t_prompt		*c_prompt;
-	int				disable_signal_catching;
+	int				signals_disabled;
 }					t_sh;
 
 t_sh				*shell_recover(void);

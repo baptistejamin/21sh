@@ -25,19 +25,23 @@ static int		shell_fire_cmds(char *input)
 	t_cmd	*cmd;
 	char	**inputs;
 	int		i;
+	int		ret;
 
 	i = 0;
+	ret = 1;
 	inputs = ft_strsplit(input, ';');
 	while (inputs[i])
 	{
 		cmd = shell_parser(inputs[i]);
 		if (cmd)
 			shell_exec(cmd);
+		else
+			ret = 0;
 		i++;
 	}
 	if (inputs[0])
 		ft_free_tab(inputs);
-	return (1);
+	return (ret);
 }
 
 static int		shell(t_sh *sh)
@@ -57,7 +61,7 @@ static int		shell(t_sh *sh)
 		if (input)
 		{
 			shell_prompt_reset();
-			shell_fire_cmds(input);
+			is_last_cmd_empty = !shell_fire_cmds(input);
 			free(input);
 		}
 	}

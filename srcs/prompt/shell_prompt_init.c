@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <shell.h>
-#include <stdio.h>
 
 void	shell_prompt_add_new(void)
 {
@@ -40,11 +39,11 @@ int		shell_prompt_init(void)
 		return (0);
 	if (tcgetattr(0, &sh->default_term))
 		return (0);
+	sh->signals_disabled = 0;
 	sh->term.c_lflag &= ~(ICANON | ECHO);
 	sh->term.c_cc[VMIN] = 1;
 	sh->term.c_cc[VTIME] = 0;
 	sh->prompt_position = 0;
-	sh->disable_signal_catching = 0;
 	if (tcsetattr(0, TCSADRAIN, &sh->term) == -1)
 		return (0);
 	shell_prompt_update_window();
@@ -65,7 +64,7 @@ int		shell_prompt_reset(void)
 
 	sh = shell_recover();
 	sh->term.c_lflag = (ICANON | ECHO | ISIG);
-	sh->disable_signal_catching = 1;
+	sh->signals_disabled = 1;
 	if (tcsetattr(0, TCSANOW, &sh->term) == -1)
 		return (0);
 	tputs(tgetstr("ve", NULL), 1, tputs_putchar);

@@ -48,7 +48,7 @@ _SRC			= 	shell.c \
 INCLUDES		= -I./libft/includes/ -I./includes/
 SRC				= $(addprefix srcs/,$(_SRC))
 OBJ				= $(SRC:.c=.o)
-CFLAGS			= -Wall -Wextra -Werror -g -ggdb
+CFLAGS			= -Wall -Wextra -Werror
 
 all: $(NAME)
 

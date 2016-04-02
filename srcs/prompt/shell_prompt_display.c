@@ -23,7 +23,7 @@ int				tputs_putchar(int c)
 
 static int		shell_prompt_get_lenght(void)
 {
-	return (2);
+	return (7);
 }
 
 static void		shell_prompt_update_cursor_to_start(t_sh *sh)
@@ -35,7 +35,7 @@ static void		shell_prompt_update_cursor_to_start(t_sh *sh)
 	i = 0;
 	char_list = sh->c_prompt->chars;
 	tputs(tgetstr("cr", NULL), 0, tputs_putchar);
-	printed_chars = 2;
+	printed_chars = shell_prompt_get_lenght();
 	while (i < sh->c_prompt->lenght)
 	{
 		if (printed_chars >= sh->win.ws_col)
@@ -83,7 +83,7 @@ int				shell_prompt_display(int show_cursor)
 	tputs(tgetstr("vi", NULL), 0, tputs_putchar);
 	shell_prompt_update_cursor_to_start(sh);
 	tputs(tgetstr("cd", NULL), 0, tputs_putchar);
-	ft_putstr_fd("$>", sh->tty);
+	ft_putstr_fd("21sh $>", sh->tty);
 	printed_chars = shell_prompt_get_lenght();
 	char_list = sh->c_prompt->chars;
 	i = 0;
