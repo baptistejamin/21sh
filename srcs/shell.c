@@ -13,7 +13,7 @@
 #include <prompt.h>
 #include <shell.h>
 
-t_sh					*shell_recover(void)
+t_sh			*shell_recover(void)
 {
 	static t_sh	sh;
 
@@ -68,16 +68,15 @@ static int		shell(t_sh *sh)
 	return (0);
 }
 
-static void 	show_welcome(t_sh *sh)
+static void		show_welcome(t_sh *sh)
 {
-	int	fd;
-	char *line;
+	int		fd;
+	char	*line;
 
 	UNUSED(sh);
 	fd = open(".banner", O_RDWR);
-	while (get_next_line(fd, &line)){
+	while (get_next_line(fd, &line))
 		ft_putendl(line);
-	}
 	close(fd);
 }
 
