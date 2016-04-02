@@ -64,44 +64,23 @@ typedef struct		s_sh
 	int				last_res;
 	t_list			*history;
 	int				prompt_position;
-	t_prompt		*current_prompt;
+	t_prompt		*c_prompt;
 	int				disable_signal_catching;
 }					t_sh;
 
 t_sh				*shell_recover(void);
 void				shell_exit(void);
-
-/*
-* Cmds
-*/
 int					shell_exec(t_cmd *cmd);
 int					shell_launch_cmd(t_sh *sh, t_list *environ,
 									char *cmd, char **args);
-
-/*
-* Autocompletion
-*/
 char				*shell_autocompletion(char *search);
-
-
-/*
-* Env
-*/
 void				shell_env_to_list(t_list **list, char **environ);
 void				shell_env_show(t_list *list);
 char				**shell_env_from_list(t_list *list);
 char				*shell_env_get(t_list *list, char *var);
 char				**shell_copy_env(char **env);
 int					shell_count_env(char **env);
-
-/*
-* Signals
-*/
 void				shell_signals(void);
-
-/*
-* Buitlins
-*/
 int					shell_boot(t_sh *sh, t_list *environ, char **cmds);
 int					shell_builtins_exit(void *sh_, t_list *environ,
 									char **cmds);

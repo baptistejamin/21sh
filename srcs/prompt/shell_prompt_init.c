@@ -15,22 +15,21 @@
 
 void	shell_prompt_add_new(void)
 {
-	t_sh 	*sh;
-
-	sh = shell_recover();
+	t_sh		*sh;
 	t_prompt	prompt;
 
+	sh = shell_recover();
 	prompt.chars = NULL;
 	prompt.cursor_index = 0;
 	prompt.lenght = 0;
 	ft_lstadd(&sh->history, ft_lstnew(&prompt, sizeof(t_prompt)));
-	sh->current_prompt = sh->history->content;
+	sh->c_prompt = sh->history->content;
 }
 
 int		shell_prompt_init(void)
 {
 	char	buff_env[4096];
-	t_sh 	*sh;
+	t_sh	*sh;
 
 	sh = shell_recover();
 	if ((sh->term_name = getenv("TERM")) == NULL)
