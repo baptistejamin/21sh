@@ -66,7 +66,8 @@ void	shell_autocompletion_add_results_from_path(t_list **list,
 			free(full_path);
 		}
 	}
-	dir = closedir(dir) ? NULL : NULL;
+	if (dir)
+		closedir(dir);
 }
 
 char	*shell_autocompletion_search_as_path(t_list **list, char *search)
