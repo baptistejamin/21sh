@@ -37,9 +37,10 @@
 # define TAB ((buf[0] == 9 && buf[1] == 0 && buf[2] == 0))
 # define IGNORE_1 ((buf[0] == 27 && buf[1] == 91 && buf[2] == 49))
 # define QUIT ((buf[0] == 4 && buf[1] == 0 && buf[2] == 0))
-# define COPY_MODE ((buf[0] == -30 && buf[1] == -128 && buf[2] == -71))
-# define COPY ((buf[0] == -62 && buf[1] == -87 && buf[2] == 0))
-# define PASTE ((buf[0] == -30 && buf[1] == -105 && buf[2] == -118))
+
+# define COPY_MODE ((buf[0] == -50 && buf[1] == -87 && buf[2] == 0))
+# define COPY ((buf[0] == -61 && buf[1] == -89 && buf[2] == 0))
+# define PASTE ((buf[0] == -30 && buf[1] == -120 && buf[2] == -102))
 # define CUT ((buf[0] == -30 && buf[1] == -119 && buf[2] == -120))
 
 enum			e_prompt_status
