@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <shell.h>
-#include <stdio.h>
 
 static void				*shell_prompt_get_functions(void)
 {
