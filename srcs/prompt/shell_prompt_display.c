@@ -76,7 +76,7 @@ static void		shell_prompt_display_chars(
 	(*i)++;
 }
 
-int				shell_prompt_display(int show_cursor)
+void			shell_prompt_display(int show_cursor)
 {
 	int		i;
 	t_list	*char_list;
@@ -103,5 +103,4 @@ int				shell_prompt_display(int show_cursor)
 	}
 	tputs(tgetstr("me", NULL), 0, tputs_putchar);
 	tputs(tgetstr("ue", NULL), 0, tputs_putchar);
-	return (1);
 }

@@ -36,8 +36,7 @@ static void				*shell_prompt_get_functions(void)
 		prompt_paste,
 		prompt_ignore_input,
 		prompt_shell_quit,
-		prompt_insert_char,
-		NULL
+		prompt_insert_char
 	};
 
 	return ((void *)f);
@@ -88,7 +87,6 @@ char					*shell_prompt_input(void)
 	ft_bzero(buf, 3);
 	while (read(0, buf, 3))
 	{
-		//printf("\nbuf  =  %s %s %s\n", ft_itoa(buf[0]), ft_itoa(buf[1]), ft_itoa(buf[2]));
 		status = shell_prompt_boot_function(buf);
 		ft_bzero(buf, 3);
 		if (status == FIRE_CMD)

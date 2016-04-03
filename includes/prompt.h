@@ -67,7 +67,7 @@ typedef struct			s_prompt
 
 void					free_char(void *content, size_t size);
 int						tputs_putchar(int c);
-int						shell_prompt_display(int show_cursor);
+void					shell_prompt_display(int show_cursor);
 int						shell_prompt_init(void);
 int						shell_prompt_reset(void);
 int						shell_prompt_update_window(void);

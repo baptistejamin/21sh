@@ -14,7 +14,7 @@
 
 enum e_prompt_status	prompt_copy_mode(char *buf)
 {
-	t_sh  *sh;
+	t_sh	*sh;
 
 	sh = shell_recover();
 	if (!COPY_MODE)
@@ -27,7 +27,7 @@ enum e_prompt_status	prompt_copy_mode(char *buf)
 
 enum e_prompt_status	prompt_copy(char *buf)
 {
-	t_sh  *sh;
+	t_sh	*sh;
 
 	sh = shell_recover();
 	if (!COPY)
@@ -45,7 +45,7 @@ enum e_prompt_status	prompt_copy(char *buf)
 
 enum e_prompt_status	prompt_cut(char *buf)
 {
-	t_sh  *sh;
+	t_sh	*sh;
 	int		i;
 
 	i = 0;
@@ -71,10 +71,9 @@ enum e_prompt_status	prompt_cut(char *buf)
 	return (READING);
 }
 
-
 enum e_prompt_status	prompt_paste(char *buf)
 {
-	t_sh  *sh;
+	t_sh	*sh;
 	int		i;
 
 	i = 0;
