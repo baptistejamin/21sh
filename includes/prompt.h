@@ -37,6 +37,10 @@
 # define TAB ((buf[0] == 9 && buf[1] == 0 && buf[2] == 0))
 # define IGNORE_1 ((buf[0] == 27 && buf[1] == 91 && buf[2] == 49))
 # define QUIT ((buf[0] == 4 && buf[1] == 0 && buf[2] == 0))
+# define COPY_MODE ((buf[0] == -30 && buf[1] == -128 && buf[2] == -71))
+# define COPY ((buf[0] == -62 && buf[1] == -87 && buf[2] == 0))
+# define PASTE ((buf[0] == -30 && buf[1] == -105 && buf[2] == -118))
+# define CUT ((buf[0] == -30 && buf[1] == -119 && buf[2] == -120))
 
 enum			e_prompt_status
 {
@@ -54,6 +58,11 @@ typedef struct			s_prompt
 	t_list				*chars;
 	int					cursor_index;
 	int					lenght;
+	int					copy_mode;
+	int					copy_start;
+	int					copy_end;
+	char				*copy_word;
+
 }						t_prompt;
 
 void					free_char(void *content, size_t size);
@@ -84,5 +93,9 @@ enum e_prompt_status	prompt_ignore_input(char *buf);
 enum e_prompt_status	prompt_autocompletion(char *buf);
 enum e_prompt_status	prompt_fire_cmd(char *buf);
 enum e_prompt_status	prompt_shell_quit(char *buf);
+enum e_prompt_status	prompt_copy_mode(char *buf);
+enum e_prompt_status	prompt_copy(char *buf);
+enum e_prompt_status	prompt_cut(char *buf);
+enum e_prompt_status	prompt_paste(char *buf);
 
 #endif

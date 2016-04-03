@@ -57,9 +57,13 @@ static void		shell_prompt_display_chars(
 
 	sh = shell_recover();
 	tputs(tgetstr("me", NULL), 0, tputs_putchar);
+	tputs(tgetstr("ue", NULL), 0, tputs_putchar);
 	current_char = *(char *)cur->content;
 	if (*i == sh->c_prompt->cursor_index && show_cursor)
 		tputs(tgetstr("mr", NULL), 0, tputs_putchar);
+	if (sh->c_prompt->copy_mode && show_cursor &&
+		*i >= sh->c_prompt->copy_start && *i <= sh->c_prompt->copy_end)
+		tputs(tgetstr("us", NULL), 0, tputs_putchar);
 	if (current_char)
 		tputs_putchar(current_char);
 	(*printed_chars)++;
@@ -98,5 +102,6 @@ int				shell_prompt_display(int show_cursor)
 		tputs_putchar(' ');
 	}
 	tputs(tgetstr("me", NULL), 0, tputs_putchar);
+	tputs(tgetstr("ue", NULL), 0, tputs_putchar);
 	return (1);
 }

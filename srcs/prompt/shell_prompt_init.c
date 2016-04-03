@@ -20,6 +20,10 @@ void	shell_prompt_add_new(void)
 	sh = shell_recover();
 	prompt.chars = NULL;
 	prompt.cursor_index = 0;
+	prompt.copy_mode = 0;
+	prompt.copy_start = 0;
+	prompt.copy_end = 0;
+	prompt.copy_word = NULL;
 	prompt.lenght = 0;
 	ft_lstadd(&sh->history, ft_lstnew(&prompt, sizeof(t_prompt)));
 	sh->c_prompt = sh->history->content;

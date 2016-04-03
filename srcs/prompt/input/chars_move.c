@@ -53,6 +53,8 @@ enum e_prompt_status	prompt_move_right(char *buf)
 	if (sh->c_prompt->cursor_index < sh->c_prompt->lenght)
 	{
 		sh->c_prompt->cursor_index++;
+		if (sh->c_prompt->copy_mode)
+			sh->c_prompt->copy_end++;
 		shell_prompt_display(1);
 	}
 	else
